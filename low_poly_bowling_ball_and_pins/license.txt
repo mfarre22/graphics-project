@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly bowling ball and pins
+* source:	https://sketchfab.com/3d-models/low-poly-bowling-ball-and-pins-f93bf2ace77448d196c4b98a4fa91eea
+* author:	nadiabellamorris (https://sketchfab.com/nadiabellamorris)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly bowling ball and pins" (https://sketchfab.com/3d-models/low-poly-bowling-ball-and-pins-f93bf2ace77448d196c4b98a4fa91eea) by nadiabellamorris (https://sketchfab.com/nadiabellamorris) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
