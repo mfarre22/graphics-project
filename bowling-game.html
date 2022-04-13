@@ -42,6 +42,8 @@ function main() {
   const renderer = new THREE.WebGLRenderer({canvas});
   renderer.outputEncoding = THREE.sRGBEncoding;
 
+  let ball;
+
   const fov = 90;
   const aspect = 2;  // the canvas default
   const near = 0.5;
@@ -126,6 +128,9 @@ function main() {
     //gltfLoader.load('./manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
+      console.log(dumpObject(root).join('\n'));
+
+      ball = root.getObjectByName("Bowling_Ball_3");
 
       // compute the box that contains all the stuff
       // from root and below
@@ -155,19 +160,36 @@ function main() {
     return needResize;
   }
 
-  function render() {
+  function render(time) {
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
 
-    console.log(camera.position);
+    time *= 0.001;
+
+    //console.log(camera.position);
+    if(ball){
+      ball.position.z -= time/1000;
+    }
 
     renderer.render(scene, camera);
 
     requestAnimationFrame(render);
   }
+
+  function dumpObject(obj, lines = [], isLast = true, prefix = '') {
+    const localPrefix = isLast ? '└─' : '├─';
+    lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
+    const newPrefix = prefix + (isLast ? '  ' : '│ ');
+    const lastNdx = obj.children.length - 1;
+    obj.children.forEach((child, ndx) => {
+      const isLast = ndx === lastNdx;
+      dumpObject(child, lines, isLast, newPrefix);
+    });
+  return lines;
+}
 
   requestAnimationFrame(render);
 }
