@@ -29,6 +29,25 @@
       <button id="reset">Reset</button>
     </div>
     <canvas id="c"></canvas>
+    <script src="./examples/js/libs/ammo.wasm.js"></script>
+    <script>
+
+      let physicsWorld;
+
+      function setupPhysicsWorld(){
+        let collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration(),
+            dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration),
+            overlappingPairCache    = new Ammo.btDbvtBroadphase(),
+            solver                  = new Ammo.btSequentialImpulseConstraintSolver();
+
+        physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+        physicsWorld.setGravity(new Ammo.btVector3(0, -10, 0));
+      }
+      Ammo().then( start );
+      function start(){
+        setupPhysicsWorld();
+      }
+    </script>
   </body>
 <!-- Import maps polyfill -->
 <!-- Remove this when import maps will be widely supported -->
@@ -57,9 +76,9 @@ function main() {
   let ball_r = 0;
 
   const fov = 90;
-  const aspect = 2;  // the canvas default
-  const near = 0.5;
-  const far = 100;
+  const aspect = window.innerWidth/window.innerHeight;  // the canvas default
+  const near = 0.1;
+  const far = 1200;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
   camera.position.set(0, 10, 20);
 
@@ -69,28 +88,6 @@ function main() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('black');
-
-  // Creates black plane under the lane
-  // {
-  //   const planeSize = 40;
-
-  //   const loader = new THREE.TextureLoader();
-  //   const texture = loader.load('resources/images/checker.png');
-  //   texture.wrapS = THREE.RepeatWrapping;
-  //   texture.wrapT = THREE.RepeatWrapping;
-  //   texture.magFilter = THREE.NearestFilter;
-  //   const repeats = planeSize / 2;
-  //   texture.repeat.set(repeats, repeats);
-
-  //   const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-  //   const planeMat = new THREE.MeshPhongMaterial({
-  //     map: texture,
-  //     side: THREE.DoubleSide,
-  //   });
-  //   const mesh = new THREE.Mesh(planeGeo, planeMat);
-  //   mesh.rotation.x = Math.PI * -.5;
-  //   scene.add(mesh);
-  // }
 
   {
     const skyColor = 0xB1E1FF;  // light blue
@@ -162,11 +159,7 @@ function main() {
     });
   }
 
-  const loader = new THREE.TextureLoader();
-  loader.load('https://media.istockphoto.com/vectors/vector-realistic-isolated-neon-sign-of-bowling-frame-logo-for-and-vector-id1131834331?k=20&m=1131834331&s=612x612&w=0&h=otJ6wGWrXJJ0Z66Vg2TqZxLVEu7WzVb6AlUNJ2JWk8U=' , function(texture)
-  {
-    scene.background = texture;  
-  });
+  var clock = new THREE.Clock();
 
 
   function resizeRendererToDisplaySize(renderer) {
@@ -187,7 +180,7 @@ function main() {
       camera.updateProjectionMatrix();
     }
 
-    time *= 0.001;
+    time *= 0.002;
 
     //console.log(camera.position);
 
