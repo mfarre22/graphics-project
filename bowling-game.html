@@ -6,18 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Three.js - Load .GLTF</title>
     <style>
-    html, body {
-        margin: 0;
-        height: 100%;
-    }
-    #c {
-        width: 50%;
-        height: 100%;
-        display: block;
-    }
+      html, body {
+          margin: 0;
+          height: 100%;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+      #c {
+          width: 50%;
+          height: 100%;
+          display: block;
+      }
     </style>
   </head>
   <body>
+    <div class="buttons">
+      <button id="left">Move Left</button>
+      <button id="right">Move Right</button>
+      <button id="throw">Throw</button>
+      <button id="reset">Reset</button>
+    </div>
     <canvas id="c"></canvas>
     <script src="./examples/js/libs/ammo.wasm.js"></script>
     <script>
@@ -62,6 +72,8 @@ function main() {
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   let ball;
+  let ball_v = 0;
+  let ball_r = 0;
 
   const fov = 90;
   const aspect = window.innerWidth/window.innerHeight;  // the canvas default
@@ -174,20 +186,41 @@ function main() {
 
     time *= 0.002;
 
+    //console.log(camera.position);
+
+    // Add movement to the ball
     if(ball){
-      ball.position.z -= time/300;
+      document.getElementById("throw").onclick = function(){
+        ball_v = 0.05;
+        ball_r = 30;
+        console.log(ball.position.x);
+        console.log(ball.position.y);
+        console.log(ball.position.z);
+      };
+      document.getElementById("left").onclick = function() {
+        ball.position.x -= 0.05;
+      };
+      document.getElementById("right").onclick = function() {
+        ball.position.x += 0.05;
+      };
+      document.getElementById("reset").onclick = function() {
+        ball.position.x = 0;
+        ball.position.y = 0.202348992228508;
+        ball.position.z = 3.579677104949951;
+        ball_v = 0;
+        ball_r = 0;
+      };
+      ball.position.z -= ball_v;
+      ball.rotation.z = ball_r;
     }
-    
-    var delta = clock.getDelta();
-    if(physicsWorld) {
-      updatePhysics(delta);
-    }
+
 
     renderer.render(scene, camera);
 
     requestAnimationFrame(render);
   }
 
+  // Prints the object tree for the scene
   function dumpObject(obj, lines = [], isLast = true, prefix = '') {
     const localPrefix = isLast ? '└─' : '├─';
     lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
