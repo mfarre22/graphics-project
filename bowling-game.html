@@ -6,18 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Three.js - Load .GLTF</title>
     <style>
-    html, body {
-        margin: 0;
-        height: 100%;
-    }
-    #c {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
+      html, body {
+          margin: 0;
+          height: 100%;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+      #c {
+          width: 50%;
+          height: 100%;
+          display: block;
+      }
     </style>
   </head>
   <body>
+    <div class="buttons">
+      <button id="left">Move Left</button>
+      <button id="right">Move Right</button>
+      <button id="throw">Throw</button>
+      <button id="reset">Reset</button>
+    </div>
     <canvas id="c"></canvas>
   </body>
 <!-- Import maps polyfill -->
@@ -43,6 +53,8 @@ function main() {
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   let ball;
+  let ball_v = 0;
+  let ball_r = 0;
 
   const fov = 90;
   const aspect = 2;  // the canvas default
@@ -58,26 +70,27 @@ function main() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('black');
 
-  {
-    const planeSize = 40;
+  // Creates black plane under the lane
+  // {
+  //   const planeSize = 40;
 
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load('resources/images/checker.png');
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.magFilter = THREE.NearestFilter;
-    const repeats = planeSize / 2;
-    texture.repeat.set(repeats, repeats);
+  //   const loader = new THREE.TextureLoader();
+  //   const texture = loader.load('resources/images/checker.png');
+  //   texture.wrapS = THREE.RepeatWrapping;
+  //   texture.wrapT = THREE.RepeatWrapping;
+  //   texture.magFilter = THREE.NearestFilter;
+  //   const repeats = planeSize / 2;
+  //   texture.repeat.set(repeats, repeats);
 
-    const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-    const planeMat = new THREE.MeshPhongMaterial({
-      map: texture,
-      side: THREE.DoubleSide,
-    });
-    const mesh = new THREE.Mesh(planeGeo, planeMat);
-    mesh.rotation.x = Math.PI * -.5;
-    scene.add(mesh);
-  }
+  //   const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
+  //   const planeMat = new THREE.MeshPhongMaterial({
+  //     map: texture,
+  //     side: THREE.DoubleSide,
+  //   });
+  //   const mesh = new THREE.Mesh(planeGeo, planeMat);
+  //   mesh.rotation.x = Math.PI * -.5;
+  //   scene.add(mesh);
+  // }
 
   {
     const skyColor = 0xB1E1FF;  // light blue
@@ -104,7 +117,7 @@ function main() {
     // in the xz plane from the center of the box
     const direction = (new THREE.Vector3())
         .subVectors(camera.position, boxCenter)
-        .multiply(new THREE.Vector3(1, 0, 1))
+        .multiply(new THREE.Vector3(1, 0.3, 1))
         .normalize();
 
     // move the camera to a position distance units way from the center
@@ -149,6 +162,13 @@ function main() {
     });
   }
 
+  const loader = new THREE.TextureLoader();
+  loader.load('https://media.istockphoto.com/vectors/vector-realistic-isolated-neon-sign-of-bowling-frame-logo-for-and-vector-id1131834331?k=20&m=1131834331&s=612x612&w=0&h=otJ6wGWrXJJ0Z66Vg2TqZxLVEu7WzVb6AlUNJ2JWk8U=' , function(texture)
+  {
+    scene.background = texture;  
+  });
+
+
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -170,15 +190,40 @@ function main() {
     time *= 0.001;
 
     //console.log(camera.position);
+
+    // Add movement to the ball
     if(ball){
-      ball.position.z -= time/1000;
+      document.getElementById("throw").onclick = function(){
+        ball_v = 0.05;
+        ball_r = 30;
+        console.log(ball.position.x);
+        console.log(ball.position.y);
+        console.log(ball.position.z);
+      };
+      document.getElementById("left").onclick = function() {
+        ball.position.x -= 0.05;
+      };
+      document.getElementById("right").onclick = function() {
+        ball.position.x += 0.05;
+      };
+      document.getElementById("reset").onclick = function() {
+        ball.position.x = 0;
+        ball.position.y = 0.202348992228508;
+        ball.position.z = 3.579677104949951;
+        ball_v = 0;
+        ball_r = 0;
+      };
+      ball.position.z -= ball_v;
+      ball.rotation.z = ball_r;
     }
+
 
     renderer.render(scene, camera);
 
     requestAnimationFrame(render);
   }
 
+  // Prints the object tree for the scene
   function dumpObject(obj, lines = [], isLast = true, prefix = '') {
     const localPrefix = isLast ? '└─' : '├─';
     lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
