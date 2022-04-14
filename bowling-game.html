@@ -11,7 +11,7 @@
         height: 100%;
     }
     #c {
-        width: 100%;
+        width: 50%;
         height: 100%;
         display: block;
     }
@@ -102,7 +102,7 @@ function main() {
     // in the xz plane from the center of the box
     const direction = (new THREE.Vector3())
         .subVectors(camera.position, boxCenter)
-        .multiply(new THREE.Vector3(1, 0, 1))
+        .multiply(new THREE.Vector3(1, 0.3, 1))
         .normalize();
 
     // move the camera to a position distance units way from the center
@@ -147,8 +147,12 @@ function main() {
     });
   }
 
-  var clock = new THREE.Clock();
+  const loader = new THREE.TextureLoader();
+  loader.load('./bowling-background.jpeg' , function(texture) {
+    scene.background = texture;  
+  });
 
+  var clock = new THREE.Clock();
 
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;

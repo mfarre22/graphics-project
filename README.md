@@ -1,6 +1,15 @@
 three.js
 ========
 
+# TO DO:
+Graphics notes
+* Have user change background or ball/pin color
+* Throwing angle (can curve after throwing)
+* Increase or decrease speed of throw
+* Add gutters so it can go off the base
+* Add soundtrack?
+* Fill in gaps with texture? Duplicate static lanes to fill in gaps
+
 [![NPM Package][npm]][npm-url]
 [![Build Size][build-size]][build-size-url]
 [![NPM Downloads][npm-downloads]][npmtrends-url]
