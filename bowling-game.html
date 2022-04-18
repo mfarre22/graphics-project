@@ -57,8 +57,6 @@
         <label for="color3">Red</label><br>-->
       </div>
       <canvas id="c"></canvas>
-      <script src="./examples/js/libs/ammo.js"></script>
-    <script src="./bowling-game.js"></script>
   </body>
 <!-- Import maps polyfill -->
 <!-- Remove this when import maps will be widely supported -->
@@ -67,225 +65,191 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "./build/three.module.js"
+    "three": "./build/three.module.js",
+    "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js"
   }
 }
 </script>
 
 <script type="module">
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
 import {OrbitControls} from './examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
 
 function main() {
+  const canvas = document.querySelector('#c');
+  const renderer = new THREE.WebGLRenderer({canvas});
+  renderer.outputEncoding = THREE.sRGBEncoding;
 
-  // Graphics variables
-  var clock = new THREE.Clock();
+  let ball1, ball2, ball3;
+  let ball_v = 0;
+  let ball_r = 0;
+  let lane1, lane2;
 
-  // Physics variables
-  const gravityConstant = - 9.8;
-  let collisionConfiguration;
-	let dispatcher;
-	let broadphase;
-	let solver;
-	let physicsWorld;
-  const rigidBodies = [];
-	let transformAux1;
+  const fov = 90;
+  const aspect = window.innerWidth/window.innerHeight;  // the canvas default
+  const near = 0.1;
+  const far = 1200;
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.set(0, 10, 20);
 
-  Ammo().then( function ( AmmoLib ) {
+  const controls = new OrbitControls(camera, canvas);
+  controls.target.set(0, 5, 0);
+  controls.update();
 
-    Ammo = AmmoLib;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('black');
 
-    init();
-    //animate();
-
-  } );
-
-  function init() {
-
-    initGraphics();
-
-    initPhysics();
-
+  {
+    const skyColor = 0xB1E1FF;  // light blue
+    const groundColor = 0xB97A20;  // brownish orange
+    const intensity = 0.6;
+    const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+    scene.add(light);
   }
 
-  function initGraphics() {
-    const canvas = document.querySelector('#c');
-    const renderer = new THREE.WebGLRenderer({canvas});
-    renderer.outputEncoding = THREE.sRGBEncoding;
+  {
+    const color = 0xFFFFFF;
+    const intensity = 0.8;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(5, 10, 2);
+    scene.add(light);
+    scene.add(light.target);
+  }
 
-    let ball1, ball2, ball3;
-    let ball_v = 0;
-    let ball_r = 0;
-    let lane1, lane2;
+  function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
+    const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
+    const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
+    const distance = halfSizeToFitOnScreen / Math.tan(halfFovY);
+    // compute a unit vector that points in the direction the camera is now
+    // in the xz plane from the center of the box
+    const direction = (new THREE.Vector3())
+        .subVectors(camera.position, boxCenter)
+        .multiply(new THREE.Vector3(1, 0.3, 1))
+        .normalize();
 
-    const fov = 90;
-    const aspect = window.innerWidth/window.innerHeight;  // the canvas default
-    const near = 0.1;
-    const far = 1200;
-    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.set(0, 10, 20);
+    // move the camera to a position distance units way from the center
+    // in whatever direction the camera was from the center already
+    camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
 
-    const controls = new OrbitControls(camera, canvas);
-    controls.target.set(0, 5, 0);
-    controls.update();
+    // pick some near and far values for the frustum that
+    // will contain the box.
+    camera.near = boxSize / 100;
+    camera.far = boxSize * 100;
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color('black');
+    camera.updateProjectionMatrix();
 
-    {
-      const skyColor = 0xB1E1FF;  // light blue
-      const groundColor = 0xB97A20;  // brownish orange
-      const intensity = 0.6;
-      const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-      scene.add(light);
-    }
+    // point the camera to look at the center of the box
+    camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
+  }
 
-    {
-      const color = 0xFFFFFF;
-      const intensity = 0.8;
-      const light = new THREE.DirectionalLight(color, intensity);
-      light.position.set(5, 10, 2);
-      scene.add(light);
-      scene.add(light.target);
-    }
+  {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      console.log(dumpObject(root).join('\n'));
 
-    function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
-      const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
-      const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
-      const distance = halfSizeToFitOnScreen / Math.tan(halfFovY);
-      // compute a unit vector that points in the direction the camera is now
-      // in the xz plane from the center of the box
-      const direction = (new THREE.Vector3())
-          .subVectors(camera.position, boxCenter)
-          .multiply(new THREE.Vector3(1, 0.3, 1))
-          .normalize();
+      ball1 = root.getObjectByName("Bowling_Ball_3");
 
-      // move the camera to a position distance units way from the center
-      // in whatever direction the camera was from the center already
-      camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
+      // compute the box that contains all the stuff
+      // from root and below
+      const box = new THREE.Box3().setFromObject(root);
 
-      // pick some near and far values for the frustum that
-      // will contain the box.
-      camera.near = boxSize / 100;
-      camera.far = boxSize * 100;
+      const boxSize = box.getSize(new THREE.Vector3()).length();
+      const boxCenter = box.getCenter(new THREE.Vector3());
 
-      camera.updateProjectionMatrix();
+      // set the camera to frame the box
+      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
 
-      // point the camera to look at the center of the box
-      camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
-    }
+      // update the Trackball controls to handle the new size
+      controls.maxDistance = boxSize * 10;
+      controls.target.copy(boxCenter);
+      controls.update();
+    });
+    /*
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      console.log(dumpObject(root).join('\n'));
 
-    {
-      const gltfLoader = new GLTFLoader();
-      gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
-        const root = gltf.scene;
-        scene.add(root);
-        console.log(dumpObject(root).join('\n'));
+      ball2 = root.getObjectByName("Bowling_Ball_3");
+      lane1 = root.getObjectByName("Bowling_Lane_0");
+      lane1.position.x += 2.5;
+      ball2.position.x += 2.5;
 
-        ball1 = root.getObjectByName("Bowling_Ball_3");
+      // compute the box that contains all the stuff
+      // from root and below
+      const box = new THREE.Box3().setFromObject(root);
 
-        // compute the box that contains all the stuff
-        // from root and below
-        const box = new THREE.Box3().setFromObject(root);
+      const boxSize = box.getSize(new THREE.Vector3()).length();
+      const boxCenter = box.getCenter(new THREE.Vector3());
 
-        const boxSize = box.getSize(new THREE.Vector3()).length();
-        const boxCenter = box.getCenter(new THREE.Vector3());
+      // set the camera to frame the box
+      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
 
-        // set the camera to frame the box
-        frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+      // update the Trackball controls to handle the new size
+      controls.maxDistance = boxSize * 10;
+      controls.target.copy(boxCenter);
+      controls.update();
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      console.log(dumpObject(root).join('\n'));
 
-        // update the Trackball controls to handle the new size
-        controls.maxDistance = boxSize * 10;
-        controls.target.copy(boxCenter);
-        controls.update();
-      });
-      /*
-      gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
-        const root = gltf.scene;
-        scene.add(root);
-        console.log(dumpObject(root).join('\n'));
+      ball3 = root.getObjectByName("Bowling_Ball_3");
+      lane2 = root.getObjectByName("Bowling_Lane_0");
+      lane2.position.x -= 2.5;
+      ball3.position.x -= 2.5;
 
-        ball2 = root.getObjectByName("Bowling_Ball_3");
-        lane1 = root.getObjectByName("Bowling_Lane_0");
-        lane1.position.x += 2.5;
-        ball2.position.x += 2.5;
+      // compute the box that contains all the stuff
+      // from root and below
+      const box = new THREE.Box3().setFromObject(root);
 
-        // compute the box that contains all the stuff
-        // from root and below
-        const box = new THREE.Box3().setFromObject(root);
+      const boxSize = box.getSize(new THREE.Vector3()).length();
+      const boxCenter = box.getCenter(new THREE.Vector3());
 
-        const boxSize = box.getSize(new THREE.Vector3()).length();
-        const boxCenter = box.getCenter(new THREE.Vector3());
+      // set the camera to frame the box
+      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
 
-        // set the camera to frame the box
-        frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+      // update the Trackball controls to handle the new size
+      controls.maxDistance = boxSize * 10;
+      controls.target.copy(boxCenter);
+      controls.update();
+    });*/
+  }
 
-        // update the Trackball controls to handle the new size
-        controls.maxDistance = boxSize * 10;
-        controls.target.copy(boxCenter);
-        controls.update();
-      });
-      gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
-        const root = gltf.scene;
-        scene.add(root);
-        console.log(dumpObject(root).join('\n'));
+  const world = new CANNON.World()
+  world.gravity.set(0, -9.82, 0)
+  world.broadphase = new CANNON.NaiveBroadphase();
+  world.solver.iterations = 10;
+  world.allowSleep = true
 
-        ball3 = root.getObjectByName("Bowling_Ball_3");
-        lane2 = root.getObjectByName("Bowling_Lane_0");
-        lane2.position.x -= 2.5;
-        ball3.position.x -= 2.5;
+  const loader = new THREE.TextureLoader();
+  loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
+    scene.background = texture;  
+  });
 
-        // compute the box that contains all the stuff
-        // from root and below
-        const box = new THREE.Box3().setFromObject(root);
-
-        const boxSize = box.getSize(new THREE.Vector3()).length();
-        const boxCenter = box.getCenter(new THREE.Vector3());
-
-        // set the camera to frame the box
-        frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
-        // update the Trackball controls to handle the new size
-        controls.maxDistance = boxSize * 10;
-        controls.target.copy(boxCenter);
-        controls.update();
-      });*/
-    }
-
-    const loader = new THREE.TextureLoader();
+  document.getElementById("background1").onclick = function(){
     loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
       scene.background = texture;  
     });
-
-    document.getElementById("background1").onclick = function(){
-      loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
-        scene.background = texture;  
-      });
-    };
-    document.getElementById("background2").onclick = function(){
-      loader.load('./backgrounds/bowling-background2.png' , function(texture) {
-        scene.background = texture;  
-      });
-    };
-    document.getElementById("background3").onclick = function(){
-      loader.load('./backgrounds/bowling-background3.jpg' , function(texture) {
-        scene.background = texture;  
-      });
-    };
-  }
-
-  function initPhysics() {
-    // Physics configuration
-
-    collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-		dispatcher = new Ammo.btCollisionDispatcher( collisionConfiguration );
-		broadphase = new Ammo.btDbvtBroadphase();
-		solver = new Ammo.btSequentialImpulseConstraintSolver();
-		physicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
-		physicsWorld.setGravity( new Ammo.btVector3( 0, gravityConstant, 0 ) );
-  }
+  };
+  document.getElementById("background2").onclick = function(){
+    loader.load('./backgrounds/bowling-background2.png' , function(texture) {
+      scene.background = texture;  
+    });
+  };
+  document.getElementById("background3").onclick = function(){
+    loader.load('./backgrounds/bowling-background3.jpg' , function(texture) {
+      scene.background = texture;  
+    });
+  };
   
+  var clock = new THREE.Clock();
+
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -350,6 +314,10 @@ function main() {
     });
 
     return lines;
+  }
+
+  function createObjects() {
+    setupLane();
   }
 
   requestAnimationFrame(render);
