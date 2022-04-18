@@ -15,39 +15,50 @@
           align-items: center;
       }
       #c {
-          width: 50%;
+          width: 80%;
           height: 100%;
           display: block;
+      }
+      .buttons button {
+        padding: 8px;
+        background-color: #48c5fa;
+        color: white;
+        border: none;
+      }
+      .parent {
+        display: flex;
+      }
+      .children {
+        flex: 1;
       }
     </style>
   </head>
   <body>
-    <div class="buttons">
-      <button id="left">Move Left</button>
-      <button id="right">Move Right</button>
-      <button id="throw">Throw</button>
-      <button id="reset">Reset</button>
-    </div>
-    <canvas id="c"></canvas>
+      <div class="buttons">
+        <button id="left">Move Left</button>
+        <button id="right">Move Right</button>
+        <button id="throw">Throw</button>
+        <button id="reset">Reset</button>
+        <br />
+        Ball speed: <input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
+        <p>Choose a background:</p>
+        <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
+        <label for="background1">Background 1</label><br>
+        <input type="radio" autocomplete="off" id="background2" name="background" value="background2" />
+        <label for="background2">Background 2</label><br>
+        <input type="radio" autocomplete="off" id="background3" name="background" value="background3" />
+        <label for="background3">Background 3</label><br>
+        <!--<p>Choose a ball color:</p>
+        <input type="radio" autocomplete="off" id="color1" name="color" value="color1" checked />
+        <label for="color1">Blue</label><br>
+        <input type="radio" autocomplete="off" id="color2" name="color" value="color2" />
+        <label for="color2">Green</label><br>
+        <input type="radio" autocomplete="off" id="color3" name="color" value="color3" />
+        <label for="color3">Red</label><br>-->
+      </div>
+      <canvas id="c"></canvas>
     <script src="./examples/js/libs/ammo.wasm.js"></script>
-    <script>
-
-      let physicsWorld;
-
-      function setupPhysicsWorld(){
-        let collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration(),
-            dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration),
-            overlappingPairCache    = new Ammo.btDbvtBroadphase(),
-            solver                  = new Ammo.btSequentialImpulseConstraintSolver();
-
-        physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-        physicsWorld.setGravity(new Ammo.btVector3(0, -10, 0));
-      }
-      Ammo().then( start );
-      function start(){
-        setupPhysicsWorld();
-      }
-    </script>
+    <script src="./bowling-game.js"></script>
   </body>
 <!-- Import maps polyfill -->
 <!-- Remove this when import maps will be widely supported -->
@@ -71,9 +82,10 @@ function main() {
   const renderer = new THREE.WebGLRenderer({canvas});
   renderer.outputEncoding = THREE.sRGBEncoding;
 
-  let ball;
+  let ball1, ball2, ball3;
   let ball_v = 0;
   let ball_r = 0;
+  let lane1, lane2;
 
   const fov = 90;
   const aspect = window.innerWidth/window.innerHeight;  // the canvas default
@@ -135,12 +147,11 @@ function main() {
   {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
-    //gltfLoader.load('./manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       console.log(dumpObject(root).join('\n'));
 
-      ball = root.getObjectByName("Bowling_Ball_3");
+      ball1 = root.getObjectByName("Bowling_Ball_3");
 
       // compute the box that contains all the stuff
       // from root and below
@@ -157,14 +168,82 @@ function main() {
       controls.target.copy(boxCenter);
       controls.update();
     });
+    /*
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      console.log(dumpObject(root).join('\n'));
+
+      ball2 = root.getObjectByName("Bowling_Ball_3");
+      lane1 = root.getObjectByName("Bowling_Lane_0");
+      lane1.position.x += 2.5;
+      ball2.position.x += 2.5;
+
+      // compute the box that contains all the stuff
+      // from root and below
+      const box = new THREE.Box3().setFromObject(root);
+
+      const boxSize = box.getSize(new THREE.Vector3()).length();
+      const boxCenter = box.getCenter(new THREE.Vector3());
+
+      // set the camera to frame the box
+      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+
+      // update the Trackball controls to handle the new size
+      controls.maxDistance = boxSize * 10;
+      controls.target.copy(boxCenter);
+      controls.update();
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      console.log(dumpObject(root).join('\n'));
+
+      ball3 = root.getObjectByName("Bowling_Ball_3");
+      lane2 = root.getObjectByName("Bowling_Lane_0");
+      lane2.position.x -= 2.5;
+      ball3.position.x -= 2.5;
+
+      // compute the box that contains all the stuff
+      // from root and below
+      const box = new THREE.Box3().setFromObject(root);
+
+      const boxSize = box.getSize(new THREE.Vector3()).length();
+      const boxCenter = box.getCenter(new THREE.Vector3());
+
+      // set the camera to frame the box
+      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+
+      // update the Trackball controls to handle the new size
+      controls.maxDistance = boxSize * 10;
+      controls.target.copy(boxCenter);
+      controls.update();
+    });*/
   }
 
   const loader = new THREE.TextureLoader();
-  loader.load('./bowling-background.jpeg' , function(texture) {
+  loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
     scene.background = texture;  
   });
 
+  document.getElementById("background1").onclick = function(){
+    loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
+      scene.background = texture;  
+    });
+  };
+  document.getElementById("background2").onclick = function(){
+    loader.load('./backgrounds/bowling-background2.png' , function(texture) {
+      scene.background = texture;  
+    });
+  };
+  document.getElementById("background3").onclick = function(){
+    loader.load('./backgrounds/bowling-background3.jpg' , function(texture) {
+      scene.background = texture;  
+    });
+  };
+  
   var clock = new THREE.Clock();
+  createObjects();
 
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
@@ -185,35 +264,37 @@ function main() {
     }
 
     time *= 0.002;
-
-    //console.log(camera.position);
+    var delta = clock.getDelta();
+    if (physicsWorld) {
+			updatePhysics(delta);
+		}
 
     // Add movement to the ball
-    if(ball){
+    if(ball1){
       document.getElementById("throw").onclick = function(){
-        ball_v = 0.05;
+        ball_v = document.getElementById("ball_speed").value;
         ball_r = 30;
         console.log(ball.position.x);
         console.log(ball.position.y);
         console.log(ball.position.z);
       };
       document.getElementById("left").onclick = function() {
-        ball.position.x -= 0.05;
+        ball1.position.x -= 0.05;
       };
       document.getElementById("right").onclick = function() {
-        ball.position.x += 0.05;
+        ball1.position.x += 0.05;
       };
       document.getElementById("reset").onclick = function() {
-        ball.position.x = 0;
-        ball.position.y = 0.202348992228508;
-        ball.position.z = 3.579677104949951;
+        ball1.position.x = 0;
+        ball1.position.y = 0.202348992228508;
+        ball1.position.z = 3.579677104949951;
         ball_v = 0;
         ball_r = 0;
-      };
-      ball.position.z -= ball_v;
-      ball.rotation.z = ball_r;
-    }
 
+      };
+      ball1.position.z -= ball_v;
+      ball1.rotation.z = ball_r;
+    }
 
     renderer.render(scene, camera);
 
@@ -230,8 +311,13 @@ function main() {
       const isLast = ndx === lastNdx;
       dumpObject(child, lines, isLast, newPrefix);
     });
-  return lines;
-}
+
+    return lines;
+  }
+
+  function createObjects() {
+    setupLane();
+  }
 
   requestAnimationFrame(render);
 }
