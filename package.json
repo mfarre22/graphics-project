@@ -166,5 +166,8 @@
       "build/three.module.js"
     ],
     "directories": {}
+  },
+  "dependencies": {
+    "ammo": "^3.0.3"
   }
 }
