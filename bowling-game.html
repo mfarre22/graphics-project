@@ -40,7 +40,7 @@
         <button id="throw">Throw</button>
         <button id="reset">Reset</button>
         <br />
-        Ball speed: <input id="ball_speed" autocomplete="off" type="range" min="0.05" max="0.5" step="0.05" value="0.15" />
+        Ball speed: <input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
         <p>Choose a background:</p>
         <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
         <label for="background1">Background 1</label><br>
@@ -82,7 +82,8 @@ function main() {
   const renderer = new THREE.WebGLRenderer({canvas});
   renderer.outputEncoding = THREE.sRGBEncoding;
 
-  let ball1, ball2, ball3;
+  let ball1, ball2, ball3, lane;
+  let pins = [];
   let ball_v = 0;
   let ball_r = 0;
   let lane1, lane2;
@@ -143,16 +144,61 @@ function main() {
     // point the camera to look at the center of the box
     camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
   }
-  /*
 
   {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
+
+      // Get lane and resize
+      lane = root.getObjectByName("Bowling_Lane_0");
+      lane.scale.x = 5;
+      lane.scale.z = 20;
+
+      // Get ball and resize
+      ball1 = root.getObjectByName("Bowling_Ball_3");
+      ball1.scale.x = 5;
+      ball1.scale.y = 5;
+      ball1.scale.z = 5;
+      ball1.position.z += 5;
+      ball1.position.y += 3;
+
+      // Get pin objects, resize, move, and rename according to position and store in array
+      pins[0] = root.getObjectByName("Bowling_Pin_5"); // Pin 1
+      pins[0].name = "Pin_1";
+      pins[1] = root.getObjectByName("Bowling_Pin002_6"); // Pin 2
+      pins[1].name = "Pin_2";
+      pins[2] = root.getObjectByName("Bowling_Pin001_4"); // Pin 3
+      pins[2].name = "Pin_3";
+      pins[3] = root.getObjectByName("Bowling_Pin005_9"); // Pin 4
+      pins[3].name = "Pin_4";
+      pins[4] = root.getObjectByName("Bowling_Pin003_7"); // Pin 5
+      pins[4].name = "Pin_5";
+      pins[5] = root.getObjectByName("Bowling_Pin004_8"); // Pin 6
+      pins[5].name = "Pin_6";
+      pins[6] = root.getObjectByName("Bowling_Pin007_11"); // Pin 7
+      pins[6].name = "Pin_7";
+      pins[7] = root.getObjectByName("Bowling_Pin009_13"); // Pin 8
+      pins[7].name = "Pin_8";
+      pins[8] = root.getObjectByName("Bowling_Pin006_10"); // Pin 9
+      pins[8].name = "Pin_9";
+      pins[9] = root.getObjectByName("Bowling_Pin008_12"); // Pin 10
+      pins[9].name = "Pin_10";
+
+      for(let i = 0; i<10; i++){
+        pins[i].scale.x = 5;
+        pins[i].scale.y = 5;
+        pins[i].scale.z = 5;
+
+        pins[i].position.x *= 5;
+        pins[i].position.z *= 5;
+        pins[i].position.z -= 5;
+      }
+
+
       console.log(dumpObject(root).join('\n'));
 
-      ball1 = root.getObjectByName("Bowling_Ball_3");
 
       // compute the box that contains all the stuff
       // from root and below
@@ -219,78 +265,57 @@ function main() {
       controls.maxDistance = boxSize * 10;
       controls.target.copy(boxCenter);
       controls.update();
-    });
-  }*/
+    });*/
+  }
 
   const world = new CANNON.World()
-  world.gravity.set(0, -9.8, 0)
+  world.gravity.set(0, -9.82, 0)
   world.broadphase = new CANNON.NaiveBroadphase();
   world.solver.iterations = 10;
   world.allowSleep = true;
 
-  const ballMaterial = new THREE.MeshPhongMaterial({ color: 0x0910e3 });
-  const laneMaterial = new THREE.MeshPhongMaterial({ color: 0xab851b });
-  const pinMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+  const normalMaterial = new THREE.MeshNormalMaterial();
+  const phongMaterial = new THREE.MeshPhongMaterial();
+
+  const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+  const cubeMesh = new THREE.Mesh(cubeGeometry, normalMaterial);
+  cubeMesh.position.x = -3;
+  cubeMesh.position.y = 3;
+  cubeMesh.castShadow = true;
+  //scene.add(cubeMesh);
+  const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+  const cubeBody = new CANNON.Body({ mass: 1 });
+  cubeBody.addShape(cubeShape);
+  cubeBody.position.x = cubeMesh.position.x;
+  cubeBody.position.y = cubeMesh.position.y;
+  cubeBody.position.z = cubeMesh.position.z;
+  //world.addBody(cubeBody);
 
   const sphereGeometry = new THREE.SphereGeometry();
-  const sphereMesh = new THREE.Mesh(sphereGeometry, ballMaterial);
-  sphereMesh.position.x = 0;
-  sphereMesh.position.y = 2;
-  sphereMesh.position.z = 2;
+  const sphereMesh = new THREE.Mesh(sphereGeometry, normalMaterial);
+  sphereMesh.position.x = 1;
+  sphereMesh.position.y = 1;
+  sphereMesh.position.z = 1;
   sphereMesh.castShadow = true;
   scene.add(sphereMesh);
-  const sphereShape = new CANNON.Sphere(1);
-  ball1 = new CANNON.Body({ mass: 5.4 });
-  ball1.addShape(sphereShape);
-  ball1.position.x = sphereMesh.position.x;
-  ball1.position.y = sphereMesh.position.y;
-  ball1.position.z = sphereMesh.position.z;
-  console.log(ball1);
-  world.addBody(ball1);
+  const sphereShape = new CANNON.Sphere(0.5);
+  const sphereBody = new CANNON.Body({ mass: 1 });
+  sphereBody.addShape(sphereShape);
+  sphereBody.position.x = sphereMesh.position.x;
+  sphereBody.position.y = sphereMesh.position.y;
+  sphereBody.position.z = sphereMesh.position.z;
+  world.addBody(sphereBody);
 
-  const planeGeometry = new THREE.PlaneGeometry(10, 25);
-  const planeMesh = new THREE.Mesh(planeGeometry, laneMaterial);
+  const planeGeometry = new THREE.PlaneGeometry(25, 25);
+  const planeMesh = new THREE.Mesh(planeGeometry, phongMaterial);
   planeMesh.rotateX(-Math.PI / 2);
   planeMesh.receiveShadow = true;
-  scene.add(planeMesh);
+  //scene.add(planeMesh);
   const planeShape = new CANNON.Plane();
-  const planeBody = new CANNON.Body({ mass: 0, material: new CANNON.Material({friction: 1, restitution: 0}) });
+  const planeBody = new CANNON.Body({ mass: 0 });
   planeBody.addShape(planeShape);
   planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-  world.addBody(planeBody);
-
-  const pinGeometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 20);
-  pinGeometry.rotateX(Math.PI / 2);
-    const pinMesh = new THREE.Mesh(pinGeometry, pinMaterial);
-    scene.add(pinMesh);
-    const pinBody = new CANNON.Body({
-      mass: 1.5,
-      shape: new CANNON.Cylinder(0.5, 0.5, 2, 20),
-      quaternion: new CANNON.Quaternion().setFromEuler(Math.PI / 2, 0, 0),
-      position: new CANNON.Vec3(0, 1, -5),
-      material: new CANNON.Material({friction: 0.01 })
-    });
-    world.addBody(pinBody);
-
-  /*
-  const pinBodies = [];
-  const pinMeshes = [];
-
-  for(let i = 0; i < 10; i++) {
-    let pinGeometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 20);
-    let pinMesh = new THREE.Mesh(pinGeometry, pinMaterial);
-    scene.add(pinMesh);
-    let pinBody = new CANNON.Body({
-      mass: 1.5,
-      shape: new CANNON.Cylinder(0.5, 0.5, 2, 20),
-      quaternion: new CANNON.Quaternion().setFromEuler(Math.PI / 2, 0, 0),
-      position: new CANNON.Vec3(0, 1, 2),
-      material: new CANNON.Material({friction: 0.01 })
-    });
-    pinBodies.push(pinBody);
-    pinMeshes.push(pinMesh);
-    world.addBody(pinBody);
-  }*/
+  //world.addBody(planeBody);
 
   const loader = new THREE.TextureLoader();
   loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
@@ -338,51 +363,37 @@ function main() {
     delta = Math.min(clock.getDelta(), 0.1);
     world.step(delta);
 
+    cubeMesh.position.set(
+        cubeBody.position.x,
+        cubeBody.position.y,
+        cubeBody.position.z
+    );
+    cubeMesh.quaternion.set(
+        cubeBody.quaternion.x,
+        cubeBody.quaternion.y,
+        cubeBody.quaternion.z,
+        cubeBody.quaternion.w
+    );
     sphereMesh.position.set(
-        ball1.position.x,
-        ball1.position.y,
-        ball1.position.z
+        sphereBody.position.x,
+        sphereBody.position.y,
+        sphereBody.position.z
     );
     sphereMesh.quaternion.set(
-        ball1.quaternion.x,
-        ball1.quaternion.y,
-        ball1.quaternion.z,
-        ball1.quaternion.w
+        sphereBody.quaternion.x,
+        sphereBody.quaternion.y,
+        sphereBody.quaternion.z,
+        sphereBody.quaternion.w
     );
-
-    pinMesh.position.set(
-      pinBody.position.x,
-      pinBody.position.y,
-      pinBody.position.z
-    );
-    pinMesh.quaternion.set(
-      pinBody.quaternion.x,
-      pinBody.quaternion.y,
-      pinBody.quaternion.z,   
-      pinBody.quaternion.x
-    )
-
-    /*
-    for(let i = 0; i < 10; i++) {
-        pinMeshes[i].position.set(
-          pinBodies[i].position.x,
-          pinBodies[i].position.y,
-          pinBodies[i].position.z
-        );
-        pinMeshes[i].quaternion.set(
-          pinBodies[i].quaternion.x,
-          pinBodies[i].quaternion.y,
-          pinBodies[i].quaternion.z,
-          pinBodies[i].quaternion.w
-        );
-    }*/
 
     // Add movement to the ball
     if(ball1){
       document.getElementById("throw").onclick = function(){
-        ball1.velocity.z = document.getElementById("ball_speed").value;
-        console.log(ball1);
-        ball_r = 30;
+        ball_v = document.getElementById("ball_speed").value;
+        ball_r = ball_v * 5;
+        console.log(ball1.position.x);
+        console.log(ball1.position.y);
+        console.log(ball1.position.z);
       };
       document.getElementById("left").onclick = function() {
         ball1.position.x -= 0.05;
@@ -392,14 +403,14 @@ function main() {
       };
       document.getElementById("reset").onclick = function() {
         ball1.position.x = 0;
-        ball1.position.y = 1;
-        ball1.position.z = 2;
-        ball1.velocity.z = 0;
+        ball1.position.y = 0.202348992228508;
+        ball1.position.z = 3.579677104949951;
+        ball_v = 0;
         ball_r = 0;
 
       };
-      ball1.position.z -= ball1.velocity.z;
-      //ball1.rotation.z = ball_r;
+      ball1.position.z -= ball_v;
+      ball1.rotation.z += ball_r;
     }
 
     renderer.render(scene, camera);
@@ -419,6 +430,10 @@ function main() {
     });
 
     return lines;
+  }
+
+  function createObjects() {
+    setupLane();
   }
 
   requestAnimationFrame(render);
