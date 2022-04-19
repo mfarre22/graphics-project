@@ -82,11 +82,11 @@ function main() {
   const renderer = new THREE.WebGLRenderer({canvas});
   renderer.outputEncoding = THREE.sRGBEncoding;
 
-  let ball1, ball2, ball3, lane;
+  let ball;
   let pins = [];
   let ball_v = 0;
   let ball_r = 0;
-  let lane1, lane2;
+  let lane;
 
   const fov = 90;
   const aspect = window.innerWidth/window.innerHeight;  // the canvas default
@@ -154,7 +154,7 @@ function main() {
       lane = root.getObjectByName("Bowling_Lane_0");
 
        // Get ball and resize
-       ball1 = root.getObjectByName("Bowling_Ball_3");
+       ball = root.getObjectByName("Bowling_Ball_3");
 
        // Get pin objects, resize, move, and rename according to position and store in array
        pins[0] = root.getObjectByName("Bowling_Pin_5"); // Pin 1
@@ -243,40 +243,43 @@ function main() {
     time *= 0.002;
 
     // Add movement to the ball
-    if(ball1){
+    if(ball){
       document.getElementById("throw").onclick = function(){
         ball_v = document.getElementById("ball_speed").value;
         ball_r = 30;
       };
       document.getElementById("left").onclick = function() {
-        ball1.position.x -= 0.05;
+        ball.position.x -= 0.05;
       };
       document.getElementById("right").onclick = function() {
-        ball1.position.x += 0.05;
+        ball.position.x += 0.05;
       };
       document.getElementById("reset").onclick = function() {
-        ball1.position.x = 0;
-        ball1.position.y = 0.202348992228508;
-        ball1.position.z = 3.579677104949951;
+        console.log(ball.position.z);
+        ball.position.x = 0;
+        ball.position.y = 0.202348992228508;
+        ball.position.z = 3.579677104949951;
         ball_v = 0;
         ball_r = 0;
 
         for(let i = 0; i<10; i++) {
-          pins[i].rotation.y = 1.5;
-          pins[i].rotation.z = -1.5;
+          pins[i].rotation.y = 0;
+          pins[i].rotation.z = 0;
         }
 
       };
-      ball1.position.z -= ball_v;
-      ball1.rotation.z = ball_r;
+      ball.position.z -= ball_v;
+      ball.rotation.z = ball_r;
       for(let i = 0; i<10; i++) {
-          if(pins[i].position.x >= (ball1.position.x + 0.25) && pins[i].position.x <= (ball1.position.x - 0.25)) {
-            if(ball1.position.z <= pins[i].position.z) {
-              //ball_v = 0;
+          if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
+            if(ball.position.z - 0.08 <= pins[i].position.z) {
               pins[i].rotation.y = -1.5;
               pins[i].rotation.z = 1.5;
             }
           }
+      }
+      if(ball.position.z < -3.5){
+        ball_v = 0;
       }
     }
 
