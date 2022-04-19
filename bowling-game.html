@@ -87,6 +87,7 @@ function main() {
   let ball_v = 0;
   let ball_r = 0;
   let lane;
+  let thrown;
 
   const fov = 90;
   const aspect = window.innerWidth/window.innerHeight;  // the canvas default
@@ -247,12 +248,17 @@ function main() {
       document.getElementById("throw").onclick = function(){
         ball_v = document.getElementById("ball_speed").value;
         ball_r = 30;
+        thrown = true;
       };
       document.getElementById("left").onclick = function() {
-        ball.position.x -= 0.05;
+        if(!thrown){
+          ball.position.x -= 0.05;
+        }
       };
       document.getElementById("right").onclick = function() {
-        ball.position.x += 0.05;
+        if(!thrown){
+          ball.position.x += 0.05;
+        }
       };
       document.getElementById("reset").onclick = function() {
         console.log(ball.position.z);
@@ -272,7 +278,7 @@ function main() {
       ball.rotation.z = ball_r;
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
-            if(ball.position.z - 0.08 <= pins[i].position.z) {
+            if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
               pins[i].rotation.y = -1.5;
               pins[i].rotation.z = 1.5;
             }
