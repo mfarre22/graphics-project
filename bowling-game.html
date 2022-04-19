@@ -82,7 +82,8 @@ function main() {
   const renderer = new THREE.WebGLRenderer({canvas});
   renderer.outputEncoding = THREE.sRGBEncoding;
 
-  let ball1, ball2, ball3;
+  let ball1, ball2, ball3, lane;
+  let pins = [];
   let ball_v = 0;
   let ball_r = 0;
   let lane1, lane2;
@@ -143,18 +144,41 @@ function main() {
     // point the camera to look at the center of the box
     camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
   }
-  
 
   {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
-      scene.add(root);
-      console.log(dumpObject(root).join('\n'));
+       scene.add(root);
+      // Get lane and resize
+      lane = root.getObjectByName("Bowling_Lane_0");
 
-      ball1 = root.getObjectByName("Bowling_Ball_3");
+       // Get ball and resize
+       ball1 = root.getObjectByName("Bowling_Ball_3");
 
-      // compute the box that contains all the stuff
+       // Get pin objects, resize, move, and rename according to position and store in array
+       pins[0] = root.getObjectByName("Bowling_Pin_5"); // Pin 1
+       pins[0].name = "Pin_1";
+       pins[1] = root.getObjectByName("Bowling_Pin002_6"); // Pin 2
+       pins[1].name = "Pin_2";
+       pins[2] = root.getObjectByName("Bowling_Pin001_4"); // Pin 3
+       pins[2].name = "Pin_3";
+       pins[3] = root.getObjectByName("Bowling_Pin005_9"); // Pin 4
+       pins[3].name = "Pin_4";
+       pins[4] = root.getObjectByName("Bowling_Pin003_7"); // Pin 5
+       pins[4].name = "Pin_5";
+       pins[5] = root.getObjectByName("Bowling_Pin004_8"); // Pin 6
+       pins[5].name = "Pin_6";
+       pins[6] = root.getObjectByName("Bowling_Pin007_11"); // Pin 7
+       pins[6].name = "Pin_7";
+       pins[7] = root.getObjectByName("Bowling_Pin009_13"); // Pin 8
+       pins[7].name = "Pin_8";
+       pins[8] = root.getObjectByName("Bowling_Pin006_10"); // Pin 9
+       pins[8].name = "Pin_9";
+       pins[9] = root.getObjectByName("Bowling_Pin008_12"); // Pin 10
+       pins[9].name = "Pin_10";
+
+       // compute the box that contains all the stuff
       // from root and below
       const box = new THREE.Box3().setFromObject(root);
 
@@ -168,59 +192,10 @@ function main() {
       controls.maxDistance = boxSize * 10;
       controls.target.copy(boxCenter);
       controls.update();
+
+       console.log(dumpObject(root).join('\n'));
+
     });
-    /*
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
-      const root = gltf.scene;
-      scene.add(root);
-      console.log(dumpObject(root).join('\n'));
-
-      ball2 = root.getObjectByName("Bowling_Ball_3");
-      lane1 = root.getObjectByName("Bowling_Lane_0");
-      lane1.position.x += 2.5;
-      ball2.position.x += 2.5;
-
-      // compute the box that contains all the stuff
-      // from root and below
-      const box = new THREE.Box3().setFromObject(root);
-
-      const boxSize = box.getSize(new THREE.Vector3()).length();
-      const boxCenter = box.getCenter(new THREE.Vector3());
-
-      // set the camera to frame the box
-      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
-      // update the Trackball controls to handle the new size
-      controls.maxDistance = boxSize * 10;
-      controls.target.copy(boxCenter);
-      controls.update();
-    });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
-      const root = gltf.scene;
-      scene.add(root);
-      console.log(dumpObject(root).join('\n'));
-
-      ball3 = root.getObjectByName("Bowling_Ball_3");
-      lane2 = root.getObjectByName("Bowling_Lane_0");
-      lane2.position.x -= 2.5;
-      ball3.position.x -= 2.5;
-
-      // compute the box that contains all the stuff
-      // from root and below
-      const box = new THREE.Box3().setFromObject(root);
-
-      const boxSize = box.getSize(new THREE.Vector3()).length();
-      const boxCenter = box.getCenter(new THREE.Vector3());
-
-      // set the camera to frame the box
-      frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
-      // update the Trackball controls to handle the new size
-      controls.maxDistance = boxSize * 10;
-      controls.target.copy(boxCenter);
-      controls.update();
-    });
-  }*/
 }
 
   const loader = new THREE.TextureLoader();
@@ -286,9 +261,23 @@ function main() {
         ball_v = 0;
         ball_r = 0;
 
+        for(let i = 0; i<10; i++) {
+          pins[i].rotation.y = 1.5;
+          pins[i].rotation.z = -1.5;
+        }
+
       };
       ball1.position.z -= ball_v;
       ball1.rotation.z = ball_r;
+      for(let i = 0; i<10; i++) {
+          if(pins[i].position.x >= (ball1.position.x + 0.25) && pins[i].position.x <= (ball1.position.x - 0.25)) {
+            if(ball1.position.z <= pins[i].position.z) {
+              //ball_v = 0;
+              pins[i].rotation.y = -1.5;
+              pins[i].rotation.z = 1.5;
+            }
+          }
+      }
     }
 
     renderer.render(scene, camera);
