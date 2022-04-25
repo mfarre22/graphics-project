@@ -25,12 +25,6 @@
         color: white;
         border: none;
       }
-      .parent {
-        display: flex;
-      }
-      .children {
-        flex: 1;
-      }
     </style>
   </head>
   <body>
@@ -218,6 +212,19 @@ function main() {
       scene.background = texture;  
     });
   };
+
+  const listener = new THREE.AudioListener();
+  camera.add(listener);
+
+  const sound = new THREE.Audio(listener);
+
+  const audioLoader = new THREE.AudioLoader();
+  audioLoader.load('./music/204_full_8bit-adventure_0155_preview.ogg', function(buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.5);
+    sound.play();
+  });
   
   const clock = new THREE.Clock();
   let delta;
@@ -266,7 +273,6 @@ function main() {
           pins[i].rotation.y = 0;
           pins[i].rotation.z = 0;
         }
-
       };
       ball.position.z -= ball_v;
       ball.rotation.z = ball_r;
