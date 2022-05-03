@@ -59,6 +59,8 @@
           Ball speed: <p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
           <br />
           Angle: <p id="angle_value"> </p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          <br />
+          Spin: <p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
         </div>  
         <div class="backgrounds"
           <p>Choose a background:</p>
@@ -107,6 +109,7 @@ function main() {
   let pins = [];
   let ball_v_y = 0;
   let ball_v_x = 0;
+  let spin = 0;
   let ball_r = 0;
   let lane;
   let thrown;
@@ -219,6 +222,35 @@ function main() {
        console.log(dumpObject(root).join('\n'));
 
     });
+
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x += 0.50;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x -= 0.50;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x += 1;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x -= 1;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
 }
 
   const loader = new THREE.TextureLoader();
@@ -281,13 +313,14 @@ function main() {
     // Add values for ball speed and angle
     document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value;
     document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
-
+    document.getElementById("spin_value").innerHTML = document.getElementById("throw_spin").value;
 
     // Add movement to the ball
     if(ball){
       document.getElementById("throw").onclick = function(){
         ball_v_y = document.getElementById("ball_speed").value;
         ball_v_x = document.getElementById("throw_angle").value / 5000;
+        spin = document.getElementById("throw_spin").value / 5000;
         ball_r = 10;
         thrown = true;
       };
@@ -308,6 +341,7 @@ function main() {
         ball.position.z = 3.579677104949951;
         ball_v_y = 0;
         ball_v_x = 0;
+        spin = 0;
         ball_r = 0;
         thrown = false;
 
@@ -322,6 +356,7 @@ function main() {
       ball.position.x += ball_v_x;
       ball.rotation.z += ball_r;
 
+
       // Hit registration for pins
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
@@ -334,6 +369,7 @@ function main() {
       if(ball.position.z < -3.5){
         ball_v_y = 0;
         ball_v_x = 0;
+        spin = 0;
       }
     }
 

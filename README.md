@@ -4,10 +4,8 @@ three.js
 # TO DO:
 Graphics notes
 * Have user change background or ball/pin color
-* Throwing angle (can curve after throwing)
-* Increase or decrease speed of throw
+* Add spin to throw
 * Add gutters so it can go off the base
-* Add soundtrack?
 * Keep track of score (implement typical 10 round bowling game?)
 * Fill in gaps with texture? Duplicate static lanes to fill in gaps
 
