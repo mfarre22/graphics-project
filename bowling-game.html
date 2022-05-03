@@ -282,6 +282,8 @@ function main() {
       };
       ball.position.z -= ball_v;
       ball.rotation.z = ball_r;
+      // higher speed = more pins fall?
+      // if ball is right in center = strike?
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
             if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
