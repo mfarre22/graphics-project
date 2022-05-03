@@ -1,0 +1,11 @@
+Model Information:
+* title:	Rain Gutter
+* source:	https://sketchfab.com/3d-models/rain-gutter-f0dbcaf76c83422c8890360fbccb7740
+* author:	FD-paffie (https://sketchfab.com/FD-paffie)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Rain Gutter" (https://sketchfab.com/3d-models/rain-gutter-f0dbcaf76c83422c8890360fbccb7740) by FD-paffie (https://sketchfab.com/FD-paffie) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

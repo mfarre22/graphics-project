@@ -40,13 +40,27 @@
       }
       .buttons button {
         padding: 8px;
-        background-color: #48c5fa;
+        background-color: #75d2ff;
         color: white;
         border: none;
       }
+      table.scoresheet {margin: 0 auto; width:80%; font-size:12px; border:1px solid; text-align: center; table-layout: fixed; margin-bottom: 40px;}
+      table.scoresheet th, tr, td {padding: 0; vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-weight: bold;}
+      table.scoresheet th {border-bottom:1px solid; background-color:#75d2ff; height:30px;}
+      table.scoresheet th:not(:last-child) {border-right:1px solid;}
+      table.scoresheet td {height:30px; background: rgba(255, 255, 255, 0.5);}
+      table.scoresheet tr td:not(:last-child) {border-right:1px solid;}
+      table.scoresheet tr:nth-child(2) td:nth-child(even) {border-bottom:1px solid;}
+      table.scoresheet tr:nth-child(2) td:last-child {border-bottom:1px solid;}
     </style>
   </head>
   <body>
+      <audio id="soundTrack" preload="auto" style="display: none">
+        <source src="./music/204_full_8bit-adventure_0155_preview.ogg" type="audio/ogg">
+      </audio>
+      <audio id="pinSound" preload="auto" style="display: none">
+        <source src="./music/ES_Bowling-Pins-9-SFX-Producer.ogg" type="audio/ogg">
+      </audio>
       <div class="controls">
         <div class="buttons">
           <button id="left">Move Left</button>
@@ -56,11 +70,11 @@
         </div>
         <div class="sliders">
           <br />
-          Ball speed: <p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
+          Ball speed:&nbsp;<p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
           <br />
-          Angle: <p id="angle_value"> </p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          Angle:&nbsp;<p id="angle_value"> </p><p>&#176;</p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
           <br />
-          Spin: <p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          Spin:&nbsp;<p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
         </div>  
         <div class="backgrounds"
           <p>Choose a background:</p>
@@ -78,6 +92,46 @@
           <label for="color2">Green</label><br>
           <input type="radio" autocomplete="off" id="color3" name="color" value="color3" />
           <label for="color3">Red</label><br>-->
+      </div>
+      <div id='scoresheet'>
+        <table id='scoresheetTable' class='scoresheet' cellpadding='1' cellspacing='0'>
+          <tr>
+            <th colspan='6'>Frame 1</th>
+            <th colspan='6'>Frame 2</th>
+            <th colspan='6'>Frame 3</th>
+            <th colspan='6'>Frame 4</th>
+            <th colspan='6'>Frame 5</th>
+            <th colspan='6'>Frame 6</th>
+            <th colspan='6'>Frame 7</th>
+            <th colspan='6'>Frame 8</th>
+            <th colspan='6'>Frame 9</th>
+            <th colspan='6'>Frame 10</th>
+          </tr>
+          <tr>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='3'></td><td colspan='3'></td>
+            <td colspan='2'></td><td colspan='2'></td><td colspan='2'></td>
+          </tr>
+          <tr>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+            <td colspan='6'></td>
+          </tr>
+        </table>
       </div>
       <canvas id="c"></canvas>
   </body>
@@ -174,7 +228,7 @@ function main() {
 
   {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       // Get lane and resize
@@ -224,28 +278,28 @@ function main() {
 
     });
 
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x += 0.50;
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x -= 0.50;
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x += 1;
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x -= 1;
@@ -285,16 +339,25 @@ function main() {
   const listener = new THREE.AudioListener();
   camera.add(listener);
 
-  const sound = new THREE.Audio(listener);
+  const soundTrack = new THREE.Audio(listener);
+  const songElement = document.getElementById( 'soundTrack' );
+  soundTrack.setMediaElementSource( songElement );
+  soundTrack.setVolume(0.2);
+  songElement.play();
 
-  const audioLoader1 = new THREE.AudioLoader();
-  const audioLoader2 = new THREE.AudioLoader();
-  audioLoader1.load('./music/204_full_8bit-adventure_0155_preview.ogg', function(buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setVolume(0.5);
-    sound.play();
-  });
+  const pinSound = new THREE.Audio(listener);
+  const pinElement = document.getElementById( 'pinSound' );
+  pinSound.setMediaElementSource( pinElement );
+  //pinElement.play();
+
+  /*
+  const audioLoader = new THREE.AudioLoader();
+  audioLoader.load('./music/204_full_8bit-adventure_0155_preview.ogg', function(buffer) {
+    soundtrack.setBuffer(buffer);
+    soundtrack.setLoop(true);
+    soundtrack.setVolume(0.3);
+    soundtrack.play();
+  });*/
   
   const clock = new THREE.Clock();
   let delta;
@@ -370,6 +433,7 @@ function main() {
       ball.position.x += ball_v_x;
       ball.rotation.z += ball_r;
 
+      // Move arrow with ball
       arrow.position.z = ball.position.z - 2.8;
       arrow.position.y = ball.position.y - 0.15;
       arrow.rotation.y = -document.getElementById("throw_angle").value / 250 + 1.5708;
@@ -378,12 +442,7 @@ function main() {
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
             if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
-              audioLoader2.load('./music/ES_Bowling0Pins-9-SFX-Producer.ogg', function(buffer) {
-                sound.setBuffer(buffer);
-                sound.setLoop(false);
-                sound.setVolume(0.9);
-                sound.play();
-              });
+              pinElement.play();
               pins[i].rotation.y = -1.5;
               pins[i].rotation.z = 1.5;
             }

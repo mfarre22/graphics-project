@@ -2,14 +2,13 @@ three.js
 ========
 
 # TO DO:
-* Have user change ball/pin color
 * Throwing spin on ball
-* Refine collision detection
-* Pin knocking sound when pins fall over
+* Refine collision detection (be able to get a strike)
 * Turn music on and off?
+* Popup for strike?
 * Add gutters so it can go off the base
+* Add bumper option
 * Multiplayer? To distinguish from other groups
-* Ball needs to be able to move after reset button too
 * Keep track of score (implement typical 10 round bowling game?)
 
 # Done:
