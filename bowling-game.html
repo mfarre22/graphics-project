@@ -7,17 +7,36 @@
     <title>Three.js - Load .GLTF</title>
     <style>
       html, body {
-          margin: 0;
-          height: 100%;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       #c {
-          width: 80%;
-          height: 100%;
-          display: block;
+        width: 80%;
+        height: 100%;
+        display: block;
+      }
+      .controls {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .buttons {
+        display: flex;
+        width: 30%;
+        justify-content: space-around;
+      }
+      .sliders {
+        display: flex;
+        align-items: center;
+      }
+      .backgrounds {
+        display: flex;
+        align-items: center;
       }
       .buttons button {
         padding: 8px;
@@ -28,27 +47,37 @@
     </style>
   </head>
   <body>
-      <div class="buttons">
-        <button id="left">Move Left</button>
-        <button id="right">Move Right</button>
-        <button id="throw">Throw</button>
-        <button id="reset">Reset</button>
-        <br />
-        Ball speed: <input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
-        <p>Choose a background:</p>
-        <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
-        <label for="background1">Background 1</label><br>
-        <input type="radio" autocomplete="off" id="background2" name="background" value="background2" />
-        <label for="background2">Background 2</label><br>
-        <input type="radio" autocomplete="off" id="background3" name="background" value="background3" />
-        <label for="background3">Background 3</label><br>
-        <!--<p>Choose a ball color:</p>
-        <input type="radio" autocomplete="off" id="color1" name="color" value="color1" checked />
-        <label for="color1">Blue</label><br>
-        <input type="radio" autocomplete="off" id="color2" name="color" value="color2" />
-        <label for="color2">Green</label><br>
-        <input type="radio" autocomplete="off" id="color3" name="color" value="color3" />
-        <label for="color3">Red</label><br>-->
+      <div class="controls">
+        <div class="buttons">
+          <button id="left">Move Left</button>
+          <button id="right">Move Right</button>
+          <button id="throw">Throw</button>
+          <button id="reset">Reset</button>
+        </div>
+        <div class="sliders">
+          <br />
+          Ball speed: <p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
+          <br />
+          Angle: <p id="angle_value"> </p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          <br />
+          Spin: <p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+        </div>  
+        <div class="backgrounds"
+          <p>Choose a background:</p>
+          <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
+          <label for="background1">Background 1</label><br>
+          <input type="radio" autocomplete="off" id="background2" name="background" value="background2" />
+          <label for="background2">Background 2</label><br>
+          <input type="radio" autocomplete="off" id="background3" name="background" value="background3" />
+          <label for="background3">Background 3</label><br>
+        </div>
+          <!--<p>Choose a ball color:</p>
+          <input type="radio" autocomplete="off" id="color1" name="color" value="color1" checked />
+          <label for="color1">Blue</label><br>
+          <input type="radio" autocomplete="off" id="color2" name="color" value="color2" />
+          <label for="color2">Green</label><br>
+          <input type="radio" autocomplete="off" id="color3" name="color" value="color3" />
+          <label for="color3">Red</label><br>-->
       </div>
       <canvas id="c"></canvas>
   </body>
@@ -78,7 +107,9 @@ function main() {
 
   let ball;
   let pins = [];
-  let ball_v = 0;
+  let ball_v_y = 0;
+  let ball_v_x = 0;
+  let spin = 0;
   let ball_r = 0;
   let lane;
   let thrown;
@@ -144,36 +175,36 @@ function main() {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
-       scene.add(root);
+      scene.add(root);
       // Get lane and resize
       lane = root.getObjectByName("Bowling_Lane_0");
 
-       // Get ball and resize
-       ball = root.getObjectByName("Bowling_Ball_3");
+      // Get ball and resize
+      ball = root.getObjectByName("Bowling_Ball_3");
 
-       // Get pin objects, resize, move, and rename according to position and store in array
-       pins[0] = root.getObjectByName("Bowling_Pin_5"); // Pin 1
-       pins[0].name = "Pin_1";
-       pins[1] = root.getObjectByName("Bowling_Pin002_6"); // Pin 2
-       pins[1].name = "Pin_2";
-       pins[2] = root.getObjectByName("Bowling_Pin001_4"); // Pin 3
-       pins[2].name = "Pin_3";
-       pins[3] = root.getObjectByName("Bowling_Pin005_9"); // Pin 4
-       pins[3].name = "Pin_4";
-       pins[4] = root.getObjectByName("Bowling_Pin003_7"); // Pin 5
-       pins[4].name = "Pin_5";
-       pins[5] = root.getObjectByName("Bowling_Pin004_8"); // Pin 6
-       pins[5].name = "Pin_6";
-       pins[6] = root.getObjectByName("Bowling_Pin007_11"); // Pin 7
-       pins[6].name = "Pin_7";
-       pins[7] = root.getObjectByName("Bowling_Pin009_13"); // Pin 8
-       pins[7].name = "Pin_8";
-       pins[8] = root.getObjectByName("Bowling_Pin006_10"); // Pin 9
-       pins[8].name = "Pin_9";
-       pins[9] = root.getObjectByName("Bowling_Pin008_12"); // Pin 10
-       pins[9].name = "Pin_10";
+      // Get pin objects, resize, move, and rename according to position and store in array
+      pins[0] = root.getObjectByName("Bowling_Pin_5"); // Pin 1
+      pins[0].name = "Pin_1";
+      pins[1] = root.getObjectByName("Bowling_Pin002_6"); // Pin 2
+      pins[1].name = "Pin_2";
+      pins[2] = root.getObjectByName("Bowling_Pin001_4"); // Pin 3
+      pins[2].name = "Pin_3";
+      pins[3] = root.getObjectByName("Bowling_Pin005_9"); // Pin 4
+      pins[3].name = "Pin_4";
+      pins[4] = root.getObjectByName("Bowling_Pin003_7"); // Pin 5
+      pins[4].name = "Pin_5";
+      pins[5] = root.getObjectByName("Bowling_Pin004_8"); // Pin 6
+      pins[5].name = "Pin_6";
+      pins[6] = root.getObjectByName("Bowling_Pin007_11"); // Pin 7
+      pins[6].name = "Pin_7";
+      pins[7] = root.getObjectByName("Bowling_Pin009_13"); // Pin 8
+      pins[7].name = "Pin_8";
+      pins[8] = root.getObjectByName("Bowling_Pin006_10"); // Pin 9
+      pins[8].name = "Pin_9";
+      pins[9] = root.getObjectByName("Bowling_Pin008_12"); // Pin 10
+      pins[9].name = "Pin_10";
 
-       // compute the box that contains all the stuff
+      // compute the box that contains all the stuff
       // from root and below
       const box = new THREE.Box3().setFromObject(root);
 
@@ -190,6 +221,35 @@ function main() {
 
        console.log(dumpObject(root).join('\n'));
 
+    });
+
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x += 0.50;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x -= 0.50;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x += 1;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
+    });
+    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      root.position.x -= 1;
+      let temp_ball = root.getObjectByName("Bowling_Ball_3");
+      temp_ball.position.y -= 100;
     });
 }
 
@@ -250,11 +310,18 @@ function main() {
 
     time *= 0.002;
 
+    // Add values for ball speed and angle
+    document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value;
+    document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
+    document.getElementById("spin_value").innerHTML = document.getElementById("throw_spin").value;
+
     // Add movement to the ball
     if(ball){
       document.getElementById("throw").onclick = function(){
-        ball_v = document.getElementById("ball_speed").value;
-        ball_r = 30;
+        ball_v_y = document.getElementById("ball_speed").value;
+        ball_v_x = document.getElementById("throw_angle").value / 5000;
+        spin = document.getElementById("throw_spin").value / 5000;
+        ball_r = 10;
         thrown = true;
       };
       document.getElementById("left").onclick = function() {
@@ -272,18 +339,25 @@ function main() {
         ball.position.x = 0;
         ball.position.y = 0.202348992228508;
         ball.position.z = 3.579677104949951;
-        ball_v = 0;
+        ball_v_y = 0;
+        ball_v_x = 0;
+        spin = 0;
         ball_r = 0;
+        thrown = false;
 
         for(let i = 0; i<10; i++) {
           pins[i].rotation.y = 0;
           pins[i].rotation.z = 0;
         }
       };
-      ball.position.z -= ball_v;
-      ball.rotation.z = ball_r;
-      // higher speed = more pins fall?
-      // if ball is right in center = strike?
+
+      // Move ball according to controls
+      ball.position.z -= ball_v_y;
+      ball.position.x += ball_v_x;
+      ball.rotation.z += ball_r;
+
+
+      // Hit registration for pins
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
             if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
@@ -293,7 +367,9 @@ function main() {
           }
       }
       if(ball.position.z < -3.5){
-        ball_v = 0;
+        ball_v_y = 0;
+        ball_v_x = 0;
+        spin = 0;
       }
     }
 
