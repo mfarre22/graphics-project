@@ -1,0 +1,11 @@
+Model Information:
+* title:	Rain gutter part 1
+* source:	https://sketchfab.com/3d-models/rain-gutter-part-1-aba5b88a29824724a91b7ae47ce0dae4
+* author:	1-3D.com (https://sketchfab.com/1-3D.com)
+
+Model License:
+* license type:	CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+* requirements:	Author must be credited. Modified versions must have the same license. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Rain gutter part 1" (https://sketchfab.com/3d-models/rain-gutter-part-1-aba5b88a29824724a91b7ae47ce0dae4) by 1-3D.com (https://sketchfab.com/1-3D.com) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)

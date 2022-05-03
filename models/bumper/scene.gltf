@@ -1,66 +1,88 @@
 {
   "accessors": [
     {
-      "bufferView": 1,
+      "bufferView": 2,
       "componentType": 5126,
-      "count": 568,
+      "count": 24,
       "max": [
-        1869.743408203125,
-        -1607.6253662109375,
-        663.9000244140625
+        1.7000000476837158,
+        -0.0,
+        4.375
       ],
       "min": [
-        470.251220703125,
-        -2550.394287109375,
-        648.0
+        0.0,
+        -2.0,
+        0.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 288,
+      "componentType": 5126,
+      "count": 24,
+      "max": [
+        0.9999999403953552,
+        0.9999999403953552,
+        0.9999999403953552
+      ],
+      "min": [
+        -0.9999999403953552,
+        -0.9999999403953552,
+        -0.9999999403953552
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 1,
-      "byteOffset": 6816,
       "componentType": 5126,
-      "count": 568,
+      "count": 24,
       "max": [
-        1.0,
-        1.0,
-        1.0
+        11.112500190734863,
+        5.556250095367432
       ],
       "min": [
-        -1.0,
-        -1.0,
-        -0.9985232949256897
+        -2.1589999198913574,
+        -5.556250095367432
       ],
-      "type": "VEC3"
+      "type": "VEC2"
     },
     {
       "bufferView": 0,
       "componentType": 5125,
-      "count": 1584,
+      "count": 36,
       "type": "SCALAR"
     }
   ],
   "asset": {
     "extras": {
-      "author": "FD-paffie (https://sketchfab.com/FD-paffie)",
+      "author": "236127 (https://sketchfab.com/236127)",
       "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-      "source": "https://sketchfab.com/3d-models/rain-gutter-f0dbcaf76c83422c8890360fbccb7740",
-      "title": "Rain Gutter"
+      "source": "https://sketchfab.com/3d-models/rectangle-7d83c21ce45443e78aa5ee1ba129709b",
+      "title": "Rectangle"
     },
-    "generator": "Sketchfab-12.68.0",
+    "generator": "Sketchfab-12.66.0",
     "version": "2.0"
   },
   "bufferViews": [
     {
       "buffer": 0,
-      "byteLength": 6336,
+      "byteLength": 144,
       "name": "floatBufferViews",
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteLength": 13632,
-      "byteOffset": 6336,
+      "byteLength": 192,
+      "byteOffset": 144,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 576,
+      "byteOffset": 336,
       "byteStride": 12,
       "name": "floatBufferViews",
       "target": 34962
@@ -68,23 +90,17 @@
   ],
   "buffers": [
     {
-      "byteLength": 19968,
+      "byteLength": 912,
       "uri": "scene.bin"
     }
   ],
   "materials": [
     {
       "doubleSided": true,
-      "name": "piece_1_piece_1_Wall_1_1_1",
+      "name": "191191191",
       "pbrMetallicRoughness": {
-        "baseColorFactor": [
-          0.7102,
-          0.702,
-          0.6531,
-          1.0
-        ],
         "metallicFactor": 0.0,
-        "roughnessFactor": 0.8990924301695543
+        "roughnessFactor": 0.6
       }
     }
   ],
@@ -95,9 +111,10 @@
         {
           "attributes": {
             "NORMAL": 1,
-            "POSITION": 0
+            "POSITION": 0,
+            "TEXCOORD_0": 2
           },
-          "indices": 2,
+          "indices": 3,
           "material": 0,
           "mode": 4
         }
@@ -133,7 +150,7 @@
       "children": [
         2
       ],
-      "name": "Grh Rain gutter.obj.cleaner.materialmerger.gles"
+      "name": "e172fc4a76424fb0b8a301efa0c52efe.obj.cleaner.materialmerger.gles"
     },
     {
       "mesh": 0,
