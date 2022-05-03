@@ -315,6 +315,21 @@ function main() {
       arrow.rotation.y = 1.5708;
       arrow.rotation.z = -1.5708;
     });
+    gltfLoader.load('./models/lane_gutter/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      let gutter = root.getObjectByName("Grh_Rain_gutterobjcleanermaterialmergergles");
+      gutter.scale.set(0.0025, 0.00035, 0.0005);
+      console.log(gutter);
+      gutter.rotation.z = 1.5708;
+      gutter.position.x -= 1;
+      gutter.position.z -= 0.3;
+      gutter.position.y -= 2.9;
+
+      // root.position.x = -50;
+      // root.position.y = -50;
+      // root.position.z = -50;
+    });
 }
 
   const loader = new THREE.TextureLoader();
