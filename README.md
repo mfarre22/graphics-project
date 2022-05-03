@@ -7,7 +7,6 @@ three.js
 * Turn music on and off?
 * Popup for strike?
 * Add gutters so it can go off the base
-* Add bumper option
 * Multiplayer? To distinguish from other groups
 * Keep track of score (implement typical 10 round bowling game?)
 

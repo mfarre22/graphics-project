@@ -472,12 +472,13 @@ function main() {
       bumper2.position.y = -0.7;
       bumper2.position.z = -0.02;
       bumper2.position.x = 0.121;
-/*
+
+      // check if ball hits bumpers and bounces off
       if(document.getElementById("bumperson").checked == true) {
-        if(((ball.position.x + 0.08) <= bumper1.position.x) || ((ball.position.x - 0.05) >= bumper2.position.x)) {
+        if(((ball.position.x + 0.25) <= bumper1.position.x) || ((ball.position.x - 0.26) >= bumper2.position.x)) {
           ball_v_x *= -1;
         }
-      }*/
+      }
 
       // collision detection for pins
       for(let i = 0; i<10; i++) {
