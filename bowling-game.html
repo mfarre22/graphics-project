@@ -34,7 +34,7 @@
         display: flex;
         align-items: center;
       }
-      .backgrounds {
+      .customize {
         display: flex;
         align-items: center;
       }
@@ -62,7 +62,7 @@
           <br />
           Spin: <p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
         </div>  
-        <div class="backgrounds"
+        <div class="customize"
           <p>Choose a background:</p>
           <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
           <label for="background1">Background 1</label><br>
@@ -70,6 +70,8 @@
           <label for="background2">Background 2</label><br>
           <input type="radio" autocomplete="off" id="background3" name="background" value="background3" />
           <label for="background3">Background 3</label><br>
+          <p>Ball Color: </p>
+          <input type="color" id="colorpicker" value="#0000ff"> 
         </div>
           <!--<p>Choose a ball color:</p>
           <input type="radio" autocomplete="off" id="color1" name="color" value="color1" checked />
@@ -314,6 +316,7 @@ function main() {
     document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value;
     document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
     document.getElementById("spin_value").innerHTML = document.getElementById("throw_spin").value;
+    let color = document.getElementById("colorpicker");
 
     // Add movement to the ball
     if(ball){
@@ -350,6 +353,11 @@ function main() {
           pins[i].rotation.z = 0;
         }
       };
+      color.addEventListener('input', function(e) {
+        let ball_color_hex = this.value;
+        let ball_color_rgb = hexToRgb(ball_color_hex);
+        ball.children[0].material.color.setRGB(ball_color_rgb.r/255, ball_color_rgb.g/255, ball_color_rgb.b/255);
+      });
 
       // Move ball according to controls
       ball.position.z -= ball_v_y;
@@ -391,6 +399,21 @@ function main() {
 
     return lines;
   }
+
+  function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
 
   requestAnimationFrame(render);
 }
