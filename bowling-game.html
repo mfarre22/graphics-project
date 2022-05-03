@@ -108,28 +108,28 @@
             <th colspan='6'>Frame 10</th>
           </tr>
           <tr>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='3'></td><td colspan='3'></td>
-            <td colspan='2'></td><td colspan='2'></td><td colspan='2'></td>
+            <td colspan='3'><p id="frame1throw1"></p></td><td colspan='3'><p id="frame1throw2"></p></td>
+            <td colspan='3'><p id="frame2throw1"></p></td><td colspan='3'><p id="frame2throw2"></p></td>
+            <td colspan='3'><p id="frame3throw1"></p></td><td colspan='3'><p id="frame3throw2"></p></td>
+            <td colspan='3'><p id="frame4throw1"></p></td><td colspan='3'><p id="frame4throw2"></p></td>
+            <td colspan='3'><p id="frame5throw1"></p></td><td colspan='3'><p id="frame5throw2"></p></td>
+            <td colspan='3'><p id="frame6throw1"></p></td><td colspan='3'><p id="frame6throw2"></p></td>
+            <td colspan='3'><p id="frame7throw1"></p></td><td colspan='3'><p id="frame7throw2"></p></td>
+            <td colspan='3'><p id="frame8throw1"></p></td><td colspan='3'><p id="frame8throw2"></p></td>
+            <td colspan='3'><p id="frame9throw1"></p></td><td colspan='3'><p id="frame9throw2"></p></td>
+            <td colspan='2'><p id="frame10throw1"></p></td><td colspan='2'></td><p id="frame10throw2"></p><td colspan='2'></td>
           </tr>
           <tr>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
-            <td colspan='6'></td>
+            <td colspan='6'><p id="frame1score"></p></td>
+            <td colspan='6'><p id="frame2score"></p></td>
+            <td colspan='6'><p id="frame3score"></p></td>
+            <td colspan='6'><p id="frame4score"></p></td>
+            <td colspan='6'><p id="frame5score"></p></td>
+            <td colspan='6'><p id="frame6score"></p></td>
+            <td colspan='6'><p id="frame7score"></p></td>
+            <td colspan='6'><p id="frame8score"></p></td>
+            <td colspan='6'><p id="frame9score"></p></td>
+            <td colspan='6'><p id="frame10score"></p></td>
           </tr>
         </table>
       </div>
@@ -168,6 +168,8 @@ function main() {
   let lane;
   let arrow;
   let thrown;
+  let frame = 1;
+  let throwNum = 1;
 
   const fov = 90;
   const aspect = window.innerWidth/window.innerHeight;  // the canvas default
@@ -348,16 +350,6 @@ function main() {
   const pinSound = new THREE.Audio(listener);
   const pinElement = document.getElementById( 'pinSound' );
   pinSound.setMediaElementSource( pinElement );
-  //pinElement.play();
-
-  /*
-  const audioLoader = new THREE.AudioLoader();
-  audioLoader.load('./music/204_full_8bit-adventure_0155_preview.ogg', function(buffer) {
-    soundtrack.setBuffer(buffer);
-    soundtrack.setLoop(true);
-    soundtrack.setVolume(0.3);
-    soundtrack.play();
-  });*/
   
   const clock = new THREE.Clock();
   let delta;
@@ -374,6 +366,7 @@ function main() {
   }
 
   function render(time) {
+
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -438,7 +431,7 @@ function main() {
       arrow.position.y = ball.position.y - 0.15;
       arrow.rotation.y = -document.getElementById("throw_angle").value / 250 + 1.5708;
 
-      // Hit registration for pins
+      // collision detection for pins
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
             if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
@@ -449,11 +442,43 @@ function main() {
           }
       }
 
+      if(ball.position.x == 0 && ball_v_x == 0) {
+        for(let i = 0; i < 10; i++) {
+          if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
+            pinElement.play();
+            pins[i].rotation.y = -1.5;
+            pins[i].rotation.z = 1.5;
+            console.log(pins[i]);
+          }
+        }
+      }
+
       if(ball.position.z < -3.5){
+        var count = 0;
         ball_v_y = 0;
         ball_v_x = 0;
         spin = 0;
+
+        // detect how many pins are down after ball stops moving
+        for(let i = 0; i<10; i++) {
+          if(pins[i].rotation.y == -1.5 && pins[i].rotation.z == 1.5) {
+            count++;
+          }
+        }
       }
+
+      // score calculation
+      if(frame == 1 && count != undefined) {
+        if(throwNum == 1) {
+          document.getElementById("frame1throw1").innerHTML = count;
+          throwNum = 2;
+          thrown = false;
+        }
+        else {
+          document.getElementById("frame1throw2").innerHTML = count;
+          throwNum = 1;
+        }
+      } 
     }
 
     renderer.render(scene, camera);

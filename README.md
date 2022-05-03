@@ -11,11 +11,6 @@ three.js
 * Multiplayer? To distinguish from other groups
 * Keep track of score (implement typical 10 round bowling game?)
 
-# Done:
-* Have user change background color
-* Increase or decrease speed of throw
-* Add soundtrack
-
 [![NPM Package][npm]][npm-url]
 [![Build Size][build-size]][build-size-url]
 [![NPM Downloads][npm-downloads]][npmtrends-url]
