@@ -70,9 +70,9 @@
         </div>
         <div class="sliders">
           <br />
-          Ball speed:&nbsp;<p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.02" value="0.05" />
+          Ball speed:&nbsp;<p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.01" value="0.05" />
           <br />
-          Angle:&nbsp;<p id="angle_value"> </p><p>&#176;</p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          Angle:&nbsp;<p id="angle_value"> </p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
           <br />
           Spin:&nbsp;<p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
         </div>  
@@ -383,7 +383,7 @@ function main() {
     time *= 0.002;
 
     // Add values for ball speed and angle to the display
-    document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value;
+    document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value * 100;
     //document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
     document.getElementById("spin_value").innerHTML = document.getElementById("throw_spin").value;
 
@@ -394,7 +394,7 @@ function main() {
         ball_v_y = document.getElementById("ball_speed").value;
         ball_v_x = document.getElementById("throw_angle").value / 5000;
         spin = document.getElementById("throw_spin").value / 5000;
-        ball_r = 10;
+        ball_r = 0.5;
         thrown = true;
       };
       document.getElementById("left").onclick = function() {
