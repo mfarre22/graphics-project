@@ -2,12 +2,20 @@ three.js
 ========
 
 # TO DO:
-Graphics notes
-* Have user change background or ball/pin color
-* Add spin to throw
+* Have user change ball/pin color
+* Throwing spin on ball
+* Refine collision detection
+* Pin knocking sound when pins fall over
+* Turn music on and off?
 * Add gutters so it can go off the base
+* Multiplayer? To distinguish from other groups
+* Ball needs to be able to move after reset button too
 * Keep track of score (implement typical 10 round bowling game?)
-* Fill in gaps with texture? Duplicate static lanes to fill in gaps
+
+# Done:
+* Have user change background color
+* Increase or decrease speed of throw
+* Add soundtrack
 
 [![NPM Package][npm]][npm-url]
 [![Build Size][build-size]][build-size-url]
