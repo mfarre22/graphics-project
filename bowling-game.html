@@ -276,7 +276,7 @@ function main() {
       controls.target.copy(boxCenter);
       controls.update();
 
-       console.log(dumpObject(root).join('\n'));
+      console.log(dumpObject(root).join('\n'));
 
     });
 
@@ -309,14 +309,11 @@ function main() {
       temp_ball.position.y -= 100;
     });
     gltfLoader.load('./models/jumpboost_arrow/scene.gltf', (gltf) => {
-      const root = gltf.scene;
-      root.scale.set(0.0005, 0.0005, 0.0005);
-      arrow = root.getObjectByName("Cube");
-      arrow.position.y = 3;
-      arrow.position.z = -5;
-      arrow.rotation.z = 1.57;
-      arrow.rotation.x = -2.8;
-      scene.add(root);
+      arrow = gltf.scene;
+      scene.add(arrow);
+      arrow.scale.set(0.00025, 0.00025, 0.00025);
+      arrow.rotation.y = 1.5708;
+      arrow.rotation.z = -1.5708;
     });
 }
 
@@ -378,9 +375,9 @@ function main() {
 
     time *= 0.002;
 
-    // Add values for ball speed and angle
+    // Add values for ball speed and angle to the display
     document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value;
-    document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
+    //document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
     document.getElementById("spin_value").innerHTML = document.getElementById("throw_spin").value;
 
     // Add movement to the ball
@@ -396,11 +393,13 @@ function main() {
       document.getElementById("left").onclick = function() {
         if(!thrown){
           ball.position.x -= 0.05;
+          arrow.position.x -= 0.0095;
         }
       };
       document.getElementById("right").onclick = function() {
         if(!thrown){
           ball.position.x += 0.05;
+          arrow.position.x += 0.0095;
         }
       };
       document.getElementById("reset").onclick = function() {
@@ -409,6 +408,7 @@ function main() {
         ball.position.x = 0;
         ball.position.y = 0.202348992228508;
         ball.position.z = 3.579677104949951;
+        arrow.position.x = 0;
         ball_v_y = 0;
         ball_v_x = 0;
         spin = 0;
@@ -425,6 +425,11 @@ function main() {
       ball.position.z -= ball_v_y;
       ball.position.x += ball_v_x;
       ball.rotation.z += ball_r;
+
+      // Move arrow with ball
+      arrow.position.z = ball.position.z - 2.8;
+      arrow.position.y = ball.position.y - 0.15;
+      arrow.rotation.y = -document.getElementById("throw_angle").value / 250 + 1.5708;
 
       // collision detection for pins
       for(let i = 0; i<10; i++) {
