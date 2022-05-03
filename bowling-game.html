@@ -228,7 +228,7 @@ function main() {
 
   {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       // Get lane and resize
@@ -278,28 +278,28 @@ function main() {
 
     });
 
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x += 0.50;
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x -= 0.50;
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x += 1;
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
-    gltfLoader.load('./low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
+    gltfLoader.load('./models/low_poly_bowling_ball_and_pins/scene.gltf', (gltf) => {
       const root = gltf.scene;
       scene.add(root);
       root.position.x -= 1;
