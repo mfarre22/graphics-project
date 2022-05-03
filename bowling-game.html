@@ -112,6 +112,7 @@ function main() {
   let spin = 0;
   let ball_r = 0;
   let lane;
+  let arrow;
   let thrown;
 
   const fov = 90;
@@ -251,6 +252,16 @@ function main() {
       let temp_ball = root.getObjectByName("Bowling_Ball_3");
       temp_ball.position.y -= 100;
     });
+    gltfLoader.load('./models/jumpboost_arrow/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      root.scale.set(0.0005, 0.0005, 0.0005);
+      arrow = root.getObjectByName("Cube");
+      arrow.position.y = 3;
+      arrow.position.z = -5;
+      arrow.rotation.z = 1.57;
+      arrow.rotation.x = -2.8;
+      scene.add(root);
+    });
 }
 
   const loader = new THREE.TextureLoader();
@@ -279,8 +290,9 @@ function main() {
 
   const sound = new THREE.Audio(listener);
 
-  const audioLoader = new THREE.AudioLoader();
-  audioLoader.load('./music/204_full_8bit-adventure_0155_preview.ogg', function(buffer) {
+  const audioLoader1 = new THREE.AudioLoader();
+  const audioLoader2 = new THREE.AudioLoader();
+  audioLoader1.load('./music/204_full_8bit-adventure_0155_preview.ogg', function(buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(true);
     sound.setVolume(0.5);
@@ -318,6 +330,7 @@ function main() {
     // Add movement to the ball
     if(ball){
       document.getElementById("throw").onclick = function(){
+        arrow.visible = false;
         ball_v_y = document.getElementById("ball_speed").value;
         ball_v_x = document.getElementById("throw_angle").value / 5000;
         spin = document.getElementById("throw_spin").value / 5000;
@@ -335,6 +348,7 @@ function main() {
         }
       };
       document.getElementById("reset").onclick = function() {
+        arrow.visible = true;
         console.log(ball.position.z);
         ball.position.x = 0;
         ball.position.y = 0.202348992228508;
@@ -361,6 +375,12 @@ function main() {
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
             if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
+              audioLoader2.load('./music/ES_Bowling0Pins-9-SFX-Producer.ogg', function(buffer) {
+                sound.setBuffer(buffer);
+                sound.setLoop(false);
+                sound.setVolume(0.9);
+                sound.play();
+              });
               pins[i].rotation.y = -1.5;
               pins[i].rotation.z = 1.5;
             }
