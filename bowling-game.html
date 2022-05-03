@@ -353,9 +353,10 @@ function main() {
           pins[i].rotation.z = 0;
         }
       };
+
+      // Change ball color
       color.addEventListener('input', function(e) {
-        let ball_color_hex = this.value;
-        let ball_color_rgb = hexToRgb(ball_color_hex);
+        let ball_color_rgb = hexToRgb(this.value);
         ball.children[0].material.color.setRGB(ball_color_rgb.r/255, ball_color_rgb.g/255, ball_color_rgb.b/255);
       });
 
