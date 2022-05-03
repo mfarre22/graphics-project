@@ -452,6 +452,22 @@ function main() {
       arrow.position.y = ball.position.y - 0.15;
       arrow.rotation.y = -document.getElementById("throw_angle").value / 250 + 1.5708;
 
+      // Move bumpers
+      bumper1.position.y = -0.7;
+      bumper1.position.z = -0.02;
+      bumper1.position.x = -0.107;
+
+      bumper2.position.y = -0.7;
+      bumper2.position.z = -0.02;
+      bumper2.position.x = 0.121;
+
+      // check if ball hits bumpers and bounces off
+      if(document.getElementById("bumperson").checked == true) {
+        if(((ball.position.x + 0.25) <= bumper1.position.x) || ((ball.position.x - 0.26) >= bumper2.position.x)) {
+          ball_v_x *= -1;
+        }
+      }
+
       // collision detection for pins
       for(let i = 0; i<10; i++) {
           if((pins[i].position.x + 0.02) >= (ball.position.x - 0.1) && (pins[i].position.x - 0.02) <= (ball.position.x + 0.1)) {
