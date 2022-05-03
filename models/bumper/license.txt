@@ -1,0 +1,11 @@
+Model Information:
+* title:	Rectangle
+* source:	https://sketchfab.com/3d-models/rectangle-7d83c21ce45443e78aa5ee1ba129709b
+* author:	236127 (https://sketchfab.com/236127)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Rectangle" (https://sketchfab.com/3d-models/rectangle-7d83c21ce45443e78aa5ee1ba129709b) by 236127 (https://sketchfab.com/236127) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

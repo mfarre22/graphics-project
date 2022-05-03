@@ -24,6 +24,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        font-family: 'Arial', 'Helvetica', sans-serif;
       }
       .buttons {
         display: flex;
@@ -70,20 +71,25 @@
         </div>
         <div class="sliders">
           <br />
-          Ball speed:&nbsp;<p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.01" value="0.05" />
+          <b>Ball speed:</b>&nbsp;<p id="speed_value"> </p><input id="ball_speed" autocomplete="off" type="range" min="0.01" max="0.15" step="0.01" value="0.05" />
           <br />
-          Angle:&nbsp;<p id="angle_value"> </p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          <b>Angle:</b>&nbsp;<p id="angle_value"> </p><input id="throw_angle" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
           <br />
-          Spin:&nbsp;<p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
+          <b>Spin:</b>&nbsp;<p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
         </div>  
         <div class="backgrounds"
-          <p>Choose a background:</p>
+          <p><b>Choose a background:</b></p>
           <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
           <label for="background1">Background 1</label><br>
           <input type="radio" autocomplete="off" id="background2" name="background" value="background2" />
           <label for="background2">Background 2</label><br>
           <input type="radio" autocomplete="off" id="background3" name="background" value="background3" />
           <label for="background3">Background 3</label><br>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Bumpers:</b></p>
+          <input type="radio" autocomplete="off" id="bumperson" name="bumpers" value="bumperson" />
+          <label for="bumpers">On</label><br>
+          <input type="radio" autocomplete="off" id="bumpersoff" name="bumpers" value="bumpersoff" checked />
+          <label for="bumpers">Off</label><br>
         </div>
           <!--<p>Choose a ball color:</p>
           <input type="radio" autocomplete="off" id="color1" name="color" value="color1" checked />
@@ -170,6 +176,7 @@ function main() {
   let thrown;
   let frame = 1;
   let throwNum = 1;
+  let bumper1, bumper2;
 
   const fov = 90;
   const aspect = window.innerWidth/window.innerHeight;  // the canvas default
@@ -315,6 +322,24 @@ function main() {
       arrow.rotation.y = 1.5708;
       arrow.rotation.z = -1.5708;
     });
+    gltfLoader.load('./models/bumper/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      bumper1 = root.getObjectByName("Object_2");
+      bumper1.scale.set(0.05, 0.007, 0.3);
+      bumper1.rotation.x = -1.5708;
+      bumper1.rotation.z = -1.5708;
+      bumper1.visible = false;
+    });
+    gltfLoader.load('./models/bumper/scene.gltf', (gltf) => {
+      const root = gltf.scene;
+      scene.add(root);
+      bumper2 = root.getObjectByName("Object_2");
+      bumper2.scale.set(0.05, 0.007, 0.3);
+      bumper2.rotation.x = -1.5708;
+      bumper2.rotation.z = -1.5708;
+      bumper2.visible = false;
+    });
 }
 
   const loader = new THREE.TextureLoader();
@@ -336,6 +361,14 @@ function main() {
     loader.load('./backgrounds/bowling-background3.jpg' , function(texture) {
       scene.background = texture;  
     });
+  };
+  document.getElementById("bumperson").onclick = function(){
+    bumper1.visible = true;
+    bumper2.visible = true;
+  };
+  document.getElementById("bumpersoff").onclick = function(){
+    bumper1.visible = false;
+    bumper2.visible = false;
   };
 
   const listener = new THREE.AudioListener();
@@ -430,6 +463,21 @@ function main() {
       arrow.position.z = ball.position.z - 2.8;
       arrow.position.y = ball.position.y - 0.15;
       arrow.rotation.y = -document.getElementById("throw_angle").value / 250 + 1.5708;
+
+      // Move bumpers
+      bumper1.position.y = -0.7;
+      bumper1.position.z = -0.02;
+      bumper1.position.x = -0.107;
+
+      bumper2.position.y = -0.7;
+      bumper2.position.z = -0.02;
+      bumper2.position.x = 0.121;
+/*
+      if(document.getElementById("bumperson").checked == true) {
+        if(((ball.position.x + 0.08) <= bumper1.position.x) || ((ball.position.x - 0.05) >= bumper2.position.x)) {
+          ball_v_x *= -1;
+        }
+      }*/
 
       // collision detection for pins
       for(let i = 0; i<10; i++) {
