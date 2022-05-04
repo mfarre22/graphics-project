@@ -3,10 +3,9 @@ three.js
 
 # TO DO:
 * Throwing spin on ball
-* Refine collision detection (be able to get a strike)
 * Turn music on and off?
 * Popup for strike?
-* Add gutters so it can go off the base
+* Move logic into a bowling game.js file? to clean up the HTML file
 * Multiplayer? To distinguish from other groups
 * Keep track of score (implement typical 10 round bowling game?)
 
