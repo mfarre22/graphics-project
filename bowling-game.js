@@ -304,6 +304,7 @@ function main() {
           }
           else {
             throwNum--;
+            frame++;
           }
         }
         else if(frame == 1) {
@@ -340,11 +341,26 @@ function main() {
         ball_r = 0;
         thrown = false;
 
+        /*
+        if(throwNum == 1) {
+          for(let i = 0; i<10; i++) {
+            if(pins[i].rotation.y == -1.5 && pins[i].rotation.z == 1.5) {
+
+            } 
+            else {
+              pins[i].rotation.y = 0;
+              pins[i].rotation.z = 0;
+            }
+          }
+        }*/
+
         for(let i = 0; i<10; i++) {
           pins[i].rotation.y = 0;
           pins[i].rotation.z = 0;
           pins[i].position.y = 0.10000000149011612;
+
         }
+
       };
       color.addEventListener('input', function(e) {
         let ball_color_hex = this.value;
@@ -433,11 +449,29 @@ function main() {
       // insert score into table
       if(frame == 0 && count != undefined) {
         if(throwNum == 1) {
-          document.getElementById("frame1throw1").innerHTML = count;
+          if(count == 10) {
+            document.getElementById("frame1throw1").innerHTML = 'X';
+            // skip to next frame and move thrownum back down
+          }
+          else if(count == 0) {
+            document.getElementById("frame1throw1").innerHTML = '-';
+          }
+          else {
+            document.getElementById("frame1throw1").innerHTML = count;
+          }
         }
         else {
-          document.getElementById("frame1throw2").innerHTML = count;
+          if(count == 0) {
+            document.getElementById("frame1throw2").innerHTML = '-';
+          }
+          else if((count + Number(document.getElementById("frame1throw1")) == 10)) {
+            document.getElementById("frame1throw2").innerHTML = '/';
+          }
+          else {
+            document.getElementById("frame1throw2").innerHTML = count;
+          }
           document.getElementById("frame1score").innerHTML = Number(document.getElementById("frame1throw1").innerHTML) + Number(document.getElementById("frame1throw2").innerHTML);
+          //frame++;
         }
       } 
       else if(frame == 1 && count != undefined) {
@@ -454,10 +488,6 @@ function main() {
     renderer.render(scene, camera);
 
    requestAnimationFrame(render);
-  }
-
-  function calculateScore() {
-    
   }
 
   // Prints the object tree for the scene

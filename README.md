@@ -5,7 +5,8 @@ three.js
 * Throwing spin on ball
 * Turn music on and off?
 * Popup for strike?
-* Move logic into a bowling game.js file? to clean up the HTML file
+* Keep the pins down that were knocked down in first throw
+* Lock score table so user can't click throw before resetting and add to table? (maybe assume no user error)
 * Multiplayer? To distinguish from other groups
 * Keep track of score (implement typical 10 round bowling game?)
 
