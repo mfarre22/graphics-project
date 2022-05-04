@@ -357,7 +357,7 @@ function main() {
       bumper2.rotation.z = -1.5708;
       bumper2.visible = false;
     });
-}
+  }
 
   const loader = new THREE.TextureLoader();
   loader.load('./backgrounds/bowling-background1.jpeg' , function(texture) {
@@ -433,7 +433,7 @@ function main() {
     let color = document.getElementById("colorpicker");
 
     // Add movement to the ball
-    if(ball){
+    if(ball && arrow){
       document.getElementById("throw").onclick = function(){
         arrow.visible = false;
         ball_v_y = document.getElementById("ball_speed").value;
