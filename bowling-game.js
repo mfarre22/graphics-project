@@ -287,31 +287,16 @@ function main() {
     // Add movement to the ball
     if(ball){
       document.getElementById("throw").onclick = function(){
-        arrow.visible = false;
-        ball_v_y = document.getElementById("ball_speed").value;
-        ball_v_x = document.getElementById("throw_angle").value / 5000;
-        spin = document.getElementById("throw_spin").value / 5000;
-        ball_r = 0.5;
+        if(ball.position.z == 3.579677104949951) {
+          arrow.visible = false;
+          ball_v_y = document.getElementById("ball_speed").value;
+          ball_v_x = document.getElementById("throw_angle").value / 5000;
+          spin = document.getElementById("throw_spin").value / 5000;
+          ball_r = 0.5;
 
-        // increment frame and throw number throughout the game
-        throwNum++;
-        /*
-        if(frame == 0) {
-          if(throwNum == 0) {
-            throwNum++;
-          }
-          else {
-            throwNum--;
-          }
+          // increment frame and throw number throughout the game
+          throwNum++;
         }
-        else if(frame == 1) {
-          if(throwNum == 0) {
-            throwNum++;
-          }
-          else {
-            throwNum--;
-          }
-        }*/
       };
       document.getElementById("left").onclick = function() {
         if(!thrown && ball.position.x > -0.5){
@@ -435,7 +420,7 @@ function main() {
       }
 
       // calcualte score and insert into table
-      calculateScore(throwNum, count);
+      throwNum = calculateScore(throwNum, count);
     }
 
     renderer.render(scene, camera);

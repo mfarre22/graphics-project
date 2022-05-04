@@ -2,10 +2,7 @@ three.js
 ========
 
 # TO DO:
-* Throwing spin on ball
 * Popup for strike?
-* Keep the pins down that were knocked down in first throw
-* Lock score table so user can't click throw before resetting and add to table? (maybe assume no user error)
 * Multiplayer? To distinguish from other groups
 * Keep track of score (implement typical 10 round bowling game?)
 

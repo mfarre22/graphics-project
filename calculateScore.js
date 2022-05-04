@@ -4,7 +4,7 @@ export const calculateScore = (throwNum, count) => {
         switch(count) {
           case 10:
             document.getElementById("frame1throw1").innerHTML = 'X';
-            // skip to next frame
+            throwNum++;
             break;
           case 0:
             document.getElementById("frame1throw1").innerHTML = '-';
@@ -15,10 +15,6 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 2 && count != undefined) {
         switch(count) {
-          case 10:
-            document.getElementById("frame1throw2").innerHTML = 'X';
-            // skip to next frame
-            break;
           case 0:
             document.getElementById("frame1throw2").innerHTML = '-';
             break;
@@ -32,7 +28,7 @@ export const calculateScore = (throwNum, count) => {
       switch(count) {
         case 10:
           document.getElementById("frame2throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame2throw1").innerHTML = '-';
@@ -43,24 +39,25 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 4 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame2throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame2throw2").innerHTML = '-';
           break;
         default:
           document.getElementById("frame2throw2").innerHTML = count;
       }
-      document.getElementById("frame2score").innerHTML = Number(document.getElementById("frame2throw1").innerHTML) + Number(document.getElementById("frame2throw2").innerHTML);
+      if(document.getElementById("frame1throw1").innerHTML == 'X') {
+        document.getElementById("frame2score").innerHTML = Number(document.getElementById("frame2throw1").innerHTML) + Number(document.getElementById("frame2throw2").innerHTML) + 10;
+      }
+      else {
+        document.getElementById("frame2score").innerHTML = Number(document.getElementById("frame2throw1").innerHTML) + Number(document.getElementById("frame2throw2").innerHTML) + Number(document.getElementById("frame1score").innerHTML);
+      }
     }
     // frame 3
     else if(throwNum == 5 && count != undefined) {
       switch(count) {
         case 10:
           document.getElementById("frame3throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame3throw1").innerHTML = '-';
@@ -71,24 +68,30 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 6 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame3throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame3throw2").innerHTML = '-';
           break;
         default:
           document.getElementById("frame3throw2").innerHTML = count;
       }
-      document.getElementById("frame3score").innerHTML = Number(document.getElementById("frame3throw1").innerHTML) + Number(document.getElementById("frame3throw2").innerHTML);
+      if(document.getElementById("frame2throw1").innerHTML == 'X') {
+          if(document.getElementById("frame1throw1").innerHTML == 'X') {
+            document.getElementById("frame3score").innerHTML = Number(document.getElementById("frame3throw1").innerHTML) + Number(document.getElementById("frame3throw2").innerHTML) + 20;
+          }
+          else {
+            document.getElementById("frame3score").innerHTML = Number(document.getElementById("frame3throw1").innerHTML) + Number(document.getElementById("frame3throw2").innerHTML) + 10;
+          }
+      }
+      else {
+        document.getElementById("frame3score").innerHTML = Number(document.getElementById("frame3throw1").innerHTML) + Number(document.getElementById("frame3throw2").innerHTML) + Number(document.getElementById("frame2score").innerHTML) + Number(document.getElementById("frame1score").innerHTML);
+      }    
     }
     // frame 4
     else if(throwNum == 7 && count != undefined) {
       switch(count) {
         case 10:
           document.getElementById("frame4throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame4throw1").innerHTML = '-';
@@ -99,24 +102,32 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 8 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame4throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame4throw2").innerHTML = '-';
           break;
         default:
           document.getElementById("frame4throw2").innerHTML = count;
       }
-      document.getElementById("frame4score").innerHTML = Number(document.getElementById("frame4throw1").innerHTML) + Number(document.getElementById("frame4throw2").innerHTML);
+      if(document.getElementById("frame3throw1").innerHTML == 'X') {
+        if(document.getElementById("frame2throw1").innerHTML == 'X') {
+            if(document.getElementById("frame1throw1").innerHTML == 'X') {
+                document.getElementById("frame4score").innerHTML = Number(document.getElementById("frame4throw1").innerHTML) + Number(document.getElementById("frame4throw2").innerHTML) + 30;
+            }
+        }
+        else {
+          document.getElementById("frame4score").innerHTML = Number(document.getElementById("frame4throw1").innerHTML) + Number(document.getElementById("frame4throw2").innerHTML) + 10;
+        }
+      }
+      else {
+        document.getElementById("frame4score").innerHTML = Number(document.getElementById("frame4throw1").innerHTML) + Number(document.getElementById("frame4throw2").innerHTML) + Number(document.getElementById("frame3score").innerHTML) + Number(document.getElementById("frame2score").innerHTML) + Number(document.getElementById("frame1score").innerHTML);
+      }
     }
     // frame 5
     else if(throwNum == 9 && count != undefined) {
       switch(count) {
         case 10:
           document.getElementById("frame5throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame5throw1").innerHTML = '-';
@@ -127,24 +138,34 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 10 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame5throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame5throw2").innerHTML = '-';
           break;
         default:
           document.getElementById("frame5throw2").innerHTML = count;
       }
-      document.getElementById("frame5score").innerHTML = Number(document.getElementById("frame5throw1").innerHTML) + Number(document.getElementById("frame5throw2").innerHTML);
+      if(document.getElementById("frame4throw1").innerHTML == 'X') {
+        if(document.getElementById("frame3throw1").innerHTML == 'X') {
+            if(document.getElementById("frame2throw1").innerHTML == 'X') {
+                if(document.getElementById("frame1throw1").innerHTML == 'X') {
+                    document.getElementById("frame4score").innerHTML = Number(document.getElementById("frame4throw1").innerHTML) + Number(document.getElementById("frame4throw2").innerHTML) + 40;
+                }
+            }
+        }
+        else {
+          document.getElementById("frame5score").innerHTML = Number(document.getElementById("frame4throw1").innerHTML) + Number(document.getElementById("frame4throw2").innerHTML) + 10;
+        }
+      }
+      else {
+        document.getElementById("frame5score").innerHTML = Number(document.getElementById("frame5throw1").innerHTML) + Number(document.getElementById("frame5throw2").innerHTML) + Number(document.getElementById("frame4score").innerHTML) + Number(document.getElementById("frame3score").innerHTML) + Number(document.getElementById("frame2score").innerHTML) + Number(document.getElementById("frame1score").innerHTML);
+      }
     }
     // frame 6
     else if(throwNum == 11 && count != undefined) {
       switch(count) {
         case 10:
           document.getElementById("frame6throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame6throw1").innerHTML = '-';
@@ -155,10 +176,6 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 12 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame6throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame6throw2").innerHTML = '-';
           break;
@@ -172,7 +189,7 @@ export const calculateScore = (throwNum, count) => {
       switch(count) {
         case 10:
           document.getElementById("frame7throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame7throw1").innerHTML = '-';
@@ -183,10 +200,6 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 14 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame7throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame7throw2").innerHTML = '-';
           break;
@@ -200,7 +213,7 @@ export const calculateScore = (throwNum, count) => {
       switch(count) {
         case 10:
           document.getElementById("frame8throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame8throw1").innerHTML = '-';
@@ -211,10 +224,6 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 16 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame8throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame8throw2").innerHTML = '-';
           break;
@@ -228,7 +237,7 @@ export const calculateScore = (throwNum, count) => {
       switch(count) {
         case 10:
           document.getElementById("frame9throw1").innerHTML = 'X';
-          // skip to next frame
+          throwNum++;
           break;
         case 0:
           document.getElementById("frame9throw1").innerHTML = '-';
@@ -239,10 +248,6 @@ export const calculateScore = (throwNum, count) => {
     }
     else if(throwNum == 18 && count != undefined) {
       switch(count) {
-        case 10:
-          document.getElementById("frame9throw2").innerHTML = 'X';
-          // skip to next frame
-          break;
         case 0:
           document.getElementById("frame9throw2").innerHTML = '-';
           break;
@@ -256,7 +261,6 @@ export const calculateScore = (throwNum, count) => {
       switch(count) {
         case 10:
           document.getElementById("frame10throw1").innerHTML = 'X';
-          // skip to next frame
           break;
         case 0:
           document.getElementById("frame10throw1").innerHTML = '-';
@@ -269,7 +273,6 @@ export const calculateScore = (throwNum, count) => {
       switch(count) {
         case 10:
           document.getElementById("frame10throw2").innerHTML = 'X';
-          // skip to next frame
           break;
         case 0:
           document.getElementById("frame10throw2").innerHTML = '-';
@@ -279,5 +282,8 @@ export const calculateScore = (throwNum, count) => {
       }
       document.getElementById("frame10score").innerHTML = Number(document.getElementById("frame10throw1").innerHTML) + Number(document.getElementById("frame10throw2").innerHTML);
     }
-    // need to add throwNum 21 if a strike happens
+    if(throwNum == 20 && (document.getElementById("frame10throw2").innerHTML == 'X')) {
+
+    }
+    return throwNum;
 };
