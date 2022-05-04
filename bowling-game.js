@@ -1,10 +1,9 @@
 import * as THREE from 'three';
 import {OrbitControls} from './examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
+import { calculateScore } from './calculateScore.js';
 
 // global variables for scoring
-var count = 0;
-var frame = 0;
 var throwNum = 0;
 
 function main() {
@@ -257,9 +256,6 @@ function main() {
   const pinSound = new THREE.Audio(listener);
   const pinElement = document.getElementById( 'pinSound' );
   pinSound.setMediaElementSource( pinElement );
-  
-  const clock = new THREE.Clock();
-  let delta;
 
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
@@ -406,16 +402,19 @@ function main() {
       }
 
       // if ball is in center = strike
-      if(ball.position.x == 0 && ball_v_x == 0) {
-        for(let i = 0; i < 10; i++) {
-          if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
-            pinElement.play();
-            pins[i].rotation.y = -1.5;
-            pins[i].rotation.z = 1.5;
+      if(throwNum%2 == 1) {
+        if(ball.position.x == 0 && ball_v_x == 0) {
+          for(let i = 0; i < 10; i++) {
+            if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
+              pinElement.play();
+              pins[i].rotation.y = -1.5;
+              pins[i].rotation.z = 1.5;
+            }
           }
         }
       }
 
+      // stop ball after throw
       if(ball.position.z < -3.5){
         var count = 0;
         ball_v_y = 0;
@@ -424,7 +423,7 @@ function main() {
 
         // detect how many pins are down after ball stops moving
         for(let i = 0; i<10; i++) {
-          if(pins[i].rotation.y == -1.5 && pins[i].rotation.z == 1.5) {
+          if(pins[i].rotation.y == -1.5 && pins[i].rotation.z == 1.5 && pins[i].position.y == 0.10000000149011612) {
             count++;
             // If on second throw, get rid of pins that were knocked over
             if(throwNum%2 == 1){
@@ -432,65 +431,11 @@ function main() {
             }
           }
         }
+        ball.position.z = -3.4;
       }
 
-      // insert score into table
-      // frame 1
-      if(throwNum == 1 && count != undefined) {
-          switch(count) {
-            case 10:
-              document.getElementById("frame1throw1").innerHTML = 'X';
-              // skip to next frame
-              break;
-            case 0:
-              document.getElementById("frame1throw1").innerHTML = '-';
-              break;
-            default:
-              document.getElementById("frame1throw1").innerHTML = count;
-          }
-      }
-      else if(throwNum == 2 && count != undefined) {
-          switch(count) {
-            case 10:
-              document.getElementById("frame1throw2").innerHTML = 'X';
-              // skip to next frame
-              break;
-            case 0:
-              document.getElementById("frame1throw2").innerHTML = '-';
-              break;
-            default:
-              document.getElementById("frame1throw2").innerHTML = count;
-          }
-          document.getElementById("frame1score").innerHTML = Number(document.getElementById("frame1throw1").innerHTML) + Number(document.getElementById("frame1throw2").innerHTML);
-      }
-      // frame 2
-      else if(throwNum == 3 && count != undefined) {
-        switch(count) {
-          case 10:
-            document.getElementById("frame2throw1").innerHTML = 'X';
-            // skip to next frame
-            break;
-          case 0:
-            document.getElementById("frame2throw1").innerHTML = '-';
-            break;
-          default:
-            document.getElementById("frame2throw1").innerHTML = count;
-        }
-      }
-      else if(throwNum == 4 && count != undefined) {
-        switch(count) {
-          case 10:
-            document.getElementById("frame2throw2").innerHTML = 'X';
-            // skip to next frame
-            break;
-          case 0:
-            document.getElementById("frame2throw2").innerHTML = '-';
-            break;
-          default:
-            document.getElementById("frame2throw2").innerHTML = count;
-        }
-        document.getElementById("frame2score").innerHTML = Number(document.getElementById("frame2throw1").innerHTML) + Number(document.getElementById("frame2throw2").innerHTML);
-      }  
+      // calcualte score and insert into table
+      calculateScore(throwNum, count);
     }
 
     renderer.render(scene, camera);
