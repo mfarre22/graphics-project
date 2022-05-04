@@ -6,6 +6,9 @@ import { calculateScore } from './calculateScore.js';
 // global variables for scoring
 var throwNum = 0;
 
+// global clock
+var clock = new THREE.Clock();
+
 function main() {
   const canvas = document.querySelector('#c');
   const renderer = new THREE.WebGLRenderer({canvas});
@@ -290,8 +293,9 @@ function main() {
         arrow.visible = false;
         ball_v_y = document.getElementById("ball_speed").value;
         ball_v_x = document.getElementById("throw_angle").value / 5000;
-        spin = document.getElementById("throw_spin").value / 5000;
+        spin = document.getElementById("throw_spin").value / 2500;
         ball_r = 0.5;
+        clock.start();
 
         // increment frame and throw number throughout the game
         throwNum++;
@@ -354,7 +358,8 @@ function main() {
 
       // Move ball according to controls
       ball.position.z -= ball_v_y;
-      ball.position.x += ball_v_x;
+      // Ball position is velocity plus acceleration due to spin
+      ball.position.x += ball_v_x + spin*clock.getElapsedTime();
       ball.rotation.z += ball_r;
 
       // Move arrow with ball
@@ -420,6 +425,7 @@ function main() {
         ball_v_y = 0;
         ball_v_x = 0;
         spin = 0;
+        ball_r = 0;
 
         // detect how many pins are down after ball stops moving
         for(let i = 0; i<10; i++) {
