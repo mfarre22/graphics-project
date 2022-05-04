@@ -297,13 +297,14 @@ function main() {
         ball_r = 0.5;
 
         // increment frame and throw number throughout the game
+        throwNum++;
+        /*
         if(frame == 0) {
           if(throwNum == 0) {
             throwNum++;
           }
           else {
             throwNum--;
-            frame++;
           }
         }
         else if(frame == 1) {
@@ -313,7 +314,7 @@ function main() {
           else {
             throwNum--;
           }
-        }
+        }*/
       };
       document.getElementById("left").onclick = function() {
         if(!thrown && ball.position.x > -0.5){
@@ -414,7 +415,7 @@ function main() {
         ball_v_x = 0;
       }
 
-
+      // if ball is in center = strike
       if(ball.position.x == 0 && ball_v_x == 0) {
         for(let i = 0; i < 10; i++) {
           if(ball.position.z - 0.08 <= pins[i].position.z && ball.position.z + 0.08 >= pins[i].position.z) {
@@ -440,42 +441,62 @@ function main() {
       }
 
       // insert score into table
-      if(frame == 0 && count != undefined) {
-        if(throwNum == 1) {
-          if(count == 10) {
-            document.getElementById("frame1throw1").innerHTML = 'X';
-            // skip to next frame and move thrownum back down
+      // frame 1
+      if(throwNum == 1 && count != undefined) {
+          switch(count) {
+            case 10:
+              document.getElementById("frame1throw1").innerHTML = 'X';
+              // skip to next frame
+              break;
+            case 0:
+              document.getElementById("frame1throw1").innerHTML = '-';
+              break;
+            default:
+              document.getElementById("frame1throw1").innerHTML = count;
           }
-          else if(count == 0) {
-            document.getElementById("frame1throw1").innerHTML = '-';
-          }
-          else {
-            document.getElementById("frame1throw1").innerHTML = count;
-          }
-        }
-        else {
-          if(count == 0) {
-            document.getElementById("frame1throw2").innerHTML = '-';
-          }
-          else if((count + Number(document.getElementById("frame1throw1")) == 10)) {
-            document.getElementById("frame1throw2").innerHTML = '/';
-          }
-          else {
-            document.getElementById("frame1throw2").innerHTML = count;
+      }
+      else if(throwNum == 2 && count != undefined) {
+          switch(count) {
+            case 10:
+              document.getElementById("frame1throw2").innerHTML = 'X';
+              // skip to next frame
+              break;
+            case 0:
+              document.getElementById("frame1throw2").innerHTML = '-';
+              break;
+            default:
+              document.getElementById("frame1throw2").innerHTML = count;
           }
           document.getElementById("frame1score").innerHTML = Number(document.getElementById("frame1throw1").innerHTML) + Number(document.getElementById("frame1throw2").innerHTML);
-          //frame++;
+      }
+      // frame 2
+      else if(throwNum == 3 && count != undefined) {
+        switch(count) {
+          case 10:
+            document.getElementById("frame2throw1").innerHTML = 'X';
+            // skip to next frame
+            break;
+          case 0:
+            document.getElementById("frame2throw1").innerHTML = '-';
+            break;
+          default:
+            document.getElementById("frame2throw1").innerHTML = count;
         }
-      } 
-      else if(frame == 1 && count != undefined) {
-        if(throwNum == 0) {
-          document.getElementById("frame2throw1").innerHTML = count;
+      }
+      else if(throwNum == 4 && count != undefined) {
+        switch(count) {
+          case 10:
+            document.getElementById("frame2throw2").innerHTML = 'X';
+            // skip to next frame
+            break;
+          case 0:
+            document.getElementById("frame2throw2").innerHTML = '-';
+            break;
+          default:
+            document.getElementById("frame2throw2").innerHTML = count;
         }
-        else {
-          document.getElementById("frame2throw2").innerHTML = count;
-          frame++;
-        }
-      } 
+        document.getElementById("frame2score").innerHTML = Number(document.getElementById("frame2throw1").innerHTML) + Number(document.getElementById("frame2throw2").innerHTML);
+      }  
     }
 
     renderer.render(scene, camera);
