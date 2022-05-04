@@ -113,6 +113,7 @@ function main() {
       pins[8].name = "Pin_9";
       pins[9] = root.getObjectByName("Bowling_Pin008_12"); // Pin 10
       pins[9].name = "Pin_10";
+      console.log(pins[1].position.y);
 
       // compute the box that contains all the stuff
       // from root and below
@@ -341,24 +342,13 @@ function main() {
         ball_r = 0;
         thrown = false;
 
-        /*
-        if(throwNum == 1) {
+        if(throwNum%2 == 0){
           for(let i = 0; i<10; i++) {
-            if(pins[i].rotation.y == -1.5 && pins[i].rotation.z == 1.5) {
-
-            } 
-            else {
-              pins[i].rotation.y = 0;
-              pins[i].rotation.z = 0;
-            }
-          }
-        }*/
-
-        for(let i = 0; i<10; i++) {
             pins[i].rotation.y = 0;
             pins[i].rotation.z = 0;
+            pins[i].position.y = 0.10000000149011612;
+          }
         }
-
       };
       color.addEventListener('input', function(e) {
         let ball_color_hex = this.value;
@@ -436,6 +426,10 @@ function main() {
         for(let i = 0; i<10; i++) {
           if(pins[i].rotation.y == -1.5 && pins[i].rotation.z == 1.5) {
             count++;
+            // If on second throw, get rid of pins that were knocked over
+            if(throwNum%2 == 1){
+              pins[i].position.y +=1000;
+            }
           }
         }
       }
