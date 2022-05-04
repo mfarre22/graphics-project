@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Three.js - Load .GLTF</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Nunito');
       html, body {
         margin: 0;
         height: 100%;
@@ -24,18 +25,21 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: 'Nunito', sans-serif;
       }
       .buttons {
         display: flex;
         width: 30%;
         justify-content: space-around;
       }
+      .buttons button {
+        font-family: 'Nunito', sans-serif;
+      }
       .sliders {
         display: flex;
         align-items: center;
       }
-      .backgrounds {
+      .customize {
         display: flex;
         align-items: center;
       }
@@ -46,7 +50,7 @@
         border: none;
       }
       table.scoresheet {margin: 0 auto; width:80%; font-size:12px; border:1px solid; text-align: center; table-layout: fixed; margin-bottom: 40px;}
-      table.scoresheet th, tr, td {padding: 0; vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-weight: bold;}
+      table.scoresheet th, tr, td {padding: 0; vertical-align: middle; font-family: 'Nunito', sans-serif; font-weight: bold;}
       table.scoresheet th {border-bottom:1px solid; background-color:#75d2ff; height:30px;}
       table.scoresheet th:not(:last-child) {border-right:1px solid;}
       table.scoresheet td {height:30px; background: rgba(255, 255, 255, 0.5);}
@@ -77,7 +81,7 @@
           <br />
           <b>Spin:</b>&nbsp;<p id="spin_value"> </p><input id="throw_spin" autocomplete="off" type="range" min="-30" max="30" step="5" value="0" />
         </div>  
-        <div class="backgrounds">
+        <div class="customize">
           <p><b>Choose a background:</b></p>
           <input type="radio" autocomplete="off" id="background1" name="background" value="background1" checked />
           <label for="background1">Background 1</label><br>
@@ -90,14 +94,9 @@
           <label for="bumpers">On</label><br>
           <input type="radio" autocomplete="off" id="bumpersoff" name="bumpers" value="bumpersoff" checked />
           <label for="bumpers">Off</label><br>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;<b>Ball Color:&nbsp;&nbsp;</b> </p>
+          <input type="color" id="colorpicker" value="#0000ff"> 
         </div>
-          <!--<p>Choose a ball color:</p>
-          <input type="radio" autocomplete="off" id="color1" name="color" value="color1" checked />
-          <label for="color1">Blue</label><br>
-          <input type="radio" autocomplete="off" id="color2" name="color" value="color2" />
-          <label for="color2">Green</label><br>
-          <input type="radio" autocomplete="off" id="color3" name="color" value="color3" />
-          <label for="color3">Red</label><br>-->
       </div>
       <div id='scoresheet'>
         <table id='scoresheetTable' class='scoresheet' cellpadding='1' cellspacing='0'>
@@ -148,15 +147,13 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "./build/three.module.js",
-    "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js"
+    "three": "./build/three.module.js"
   }
 }
 </script>
 
 <script type="module">
 import * as THREE from 'three';
-import * as CANNON from 'cannon-es';
 import {OrbitControls} from './examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
 
@@ -433,6 +430,7 @@ function main() {
     document.getElementById("speed_value").innerHTML = document.getElementById("ball_speed").value * 100;
     //document.getElementById("angle_value").innerHTML = document.getElementById("throw_angle").value;
     document.getElementById("spin_value").innerHTML = document.getElementById("throw_spin").value;
+    let color = document.getElementById("colorpicker");
 
     // Add movement to the ball
     if(ball){
@@ -475,6 +473,11 @@ function main() {
           pins[i].rotation.z = 0;
         }
       };
+      color.addEventListener('input', function(e) {
+        let ball_color_hex = this.value;
+        let ball_color_rgb = hexToRgb(ball_color_hex);
+        ball.children[0].material.color.setRGB(ball_color_rgb.r/255, ball_color_rgb.g/255, ball_color_rgb.b/255);
+      });
 
       // Move ball according to controls
       ball.position.z -= ball_v_y;
@@ -583,6 +586,21 @@ function main() {
 
     return lines;
   }
+
+  function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
 
   requestAnimationFrame(render);
 }
