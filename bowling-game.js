@@ -365,6 +365,7 @@ function main() {
       if(document.getElementById("bumperson").checked == true) {
         if(((ball.position.x + 0.25) <= bumper1.position.x) || ((ball.position.x - 0.26) >= bumper2.position.x)) {
           ball_v_x *= -1;
+          spin = 0;
         }
       }
 
